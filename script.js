@@ -2,7 +2,7 @@
    CONFIGURA AQUÍ LA URL DE TU WEB APP DE APPS SCRIPT
    (Deploy > New deployment > Web app > copiar "URL de la app")
    ========================================================= */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw0tbsJCl8z4JFjYupNvQS2o8yZmhxAQ7EFmf23g6av_4IoIP3skzricoOZgiqjKwMx/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjzcY-8FzOj8vLLq4m5-IIqUsdV8RQP2t8sgyzmZTwo8GroRvW4QRoy5pzRTOuN1dx/exec';
  
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
  
@@ -96,14 +96,16 @@ function renderRecordatorios(){
 function fillTable(tbodyId, rows, statusOptions){
   const tbody = document.getElementById(tbodyId);
   if (rows.length === 0){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Sin clientes pendientes</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Sin clientes pendientes</td></tr>`;
     return;
   }
   tbody.innerHTML = rows.map(c => `
     <tr>
       <td>${c.nombre}</td>
       <td>${c.celular}</td>
+      <td>${c.folio || '—'}</td>
       <td>${c.fecha || '—'}</td>
+      <td>${c.tdc || '—'}</td>
       <td>${c.fechaCita || '—'}</td>
       <td>${statusSelectHTML(c.row, c.status, statusOptions)}</td>
     </tr>
@@ -264,7 +266,9 @@ function selectSemana(year, month, week, btn){
     <tr>
       <td>${c.nombre}</td>
       <td>${c.celular}</td>
+      <td>${c.folio || '—'}</td>
       <td>${c.fecha || '—'}</td>
+      <td>${c.tdc || '—'}</td>
       <td>${c.fechaCita || '—'}</td>
       <td><span class="badge ${statusClass(c.status)}">${c.status || 'Sin enviar'}</span></td>
     </tr>

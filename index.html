@@ -11,7 +11,6 @@
 <script src="script.js" async></script>
 </head>
 <body>
-
 <div class="navbar">
   <h1>Panel de Clientes</h1>
   <div class="tabs">
@@ -20,38 +19,38 @@
   </div>
   <div class="status-dot"><span class="dot"></span><span id="lastSync">cargando…</span></div>
 </div>
-
+ 
 <main>
   <div id="configBanner" class="config-banner">
     ⚠️ Configura la URL de tu Web App de Apps Script en la constante <code>APPS_SCRIPT_URL</code> dentro de este archivo.
   </div>
-
+ 
   <!-- VISTA RECORDATORIOS -->
   <section id="view-recordatorios" class="view active">
     <div class="panel">
       <div class="panel-title">Clientes de hoy</div>
-      <div class="panel-sub">Clientes de hoy (<span class="today-label"></span>) </div>
+      <div class="panel-sub">Clientes cuya columna <b>Fecha</b> es hoy (<span class="today-label"></span>) y aún no se les envía nada. Al marcar "1er Mensaje" desaparecen de aquí.</div>
       <table class="grid">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Fecha</th><th>Fecha cita</th><th>Status</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
         <tbody id="tabla-hoy"></tbody>
       </table>
     </div>
-
+ 
     <div class="panel">
       <div class="panel-title">Recordatorios</div>
-      <div class="panel-sub">Clientes cuya <b>Fecha cita</b> es hoy (<span class="today-label"></span>) </div>
+      <div class="panel-sub">Clientes cuya <b>Fecha cita</b> es hoy (<span class="today-label"></span>) y ya tienen 1er Mensaje, falta el 2do. Al marcarlo desaparecen de aquí.</div>
       <table class="grid">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Fecha</th><th>Fecha cita</th><th>Status</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
         <tbody id="tabla-citas"></tbody>
       </table>
     </div>
   </section>
-
+ 
   <!-- VISTA CLIENTES -->
   <section id="view-clientes" class="view">
     <div class="panel">
-      <div class="panel-sub" style="margin-top:-4px;">Base de datos de clientes</div>
-
+      <div class="panel-sub" style="margin-top:-4px;">Clientes agrupados por la columna <b>Fecha</b>. Elige un año, luego un mes, luego una semana.</div>
+ 
       <div class="drill-block">
         <button type="button" class="drill-header" id="hdr-anio" onclick="toggleBlock('anio')">
           <span>AÑO</span>
@@ -64,7 +63,7 @@
           <div id="box-anio" class="drill-box"></div>
         </div>
       </div>
-
+ 
       <div class="drill-block">
         <button type="button" class="drill-header locked" id="hdr-mes" onclick="toggleBlock('mes')">
           <span>MES</span>
@@ -77,7 +76,7 @@
           <div id="box-mes" class="drill-box"></div>
         </div>
       </div>
-
+ 
       <div class="drill-block">
         <button type="button" class="drill-header locked" id="hdr-semana" onclick="toggleBlock('semana')">
           <span>SEMANA</span>
@@ -90,15 +89,15 @@
           <div id="box-semana" class="drill-box"></div>
         </div>
       </div>
-
+ 
       <table class="grid" id="tabla-clientes-wrap" style="display:none;">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Fecha</th><th>Fecha cita</th><th>Status</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
         <tbody id="tabla-clientes"></tbody>
       </table>
     </div>
   </section>
 </main>
-
+ 
 <div class="toast" id="toast"></div>
 
 </body>
