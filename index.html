@@ -29,7 +29,7 @@
   <section id="view-recordatorios" class="view active">
     <div class="panel">
       <div class="panel-title">Clientes de hoy</div>
-      <div class="panel-sub">Clientes cuya columna <b>Fecha</b> es hoy (<span class="today-label"></span>) y aún no se les envía nada. Al marcar "1er Mensaje" desaparecen de aquí.</div>
+      <div class="panel-sub">Clientes de hoy (<span class="today-label"></span>).</div>
       <table class="grid">
         <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
         <tbody id="tabla-hoy"></tbody>
@@ -38,7 +38,7 @@
  
     <div class="panel">
       <div class="panel-title">Recordatorios</div>
-      <div class="panel-sub">Clientes cuya <b>Fecha cita</b> es hoy (<span class="today-label"></span>) y ya tienen 1er Mensaje, falta el 2do. Al marcarlo desaparecen de aquí.</div>
+      <div class="panel-sub">Clientes cuya <b>Fecha cita</b> es hoy (<span class="today-label"></span>).</div>
       <table class="grid">
         <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
         <tbody id="tabla-citas"></tbody>
@@ -49,7 +49,7 @@
   <!-- VISTA CLIENTES -->
   <section id="view-clientes" class="view">
     <div class="panel">
-      <div class="panel-sub" style="margin-top:-4px;">Clientes agrupados por la columna <b>Fecha</b>. Elige un año, luego un mes, luego una semana.</div>
+      <div class="panel-sub" style="margin-top:-4px;">Base de datos de clientes.</div>
  
       <div class="drill-block">
         <button type="button" class="drill-header" id="hdr-anio" onclick="toggleBlock('anio')">
