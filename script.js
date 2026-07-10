@@ -35,6 +35,111 @@ let CLIENTES = [];
 let HOY = '';
 // If true, when fetch fails we'll use sample data so UI can be tested offline
 const USE_LOCAL_FALLBACK = true;
+
+// ---------- WhatsApp (enlaces wa.me, no requiere API ni credenciales) ----------
+
+// Limpia el número y le agrega código de país MX (52) si viene a 10 dígitos.
+// Si tus clientes son de otro país, ajusta aquí.
+function cleanPhone_(raw){
+  let digits = (raw || '').toString().replace(/\D/g, '');
+  if (digits.length === 10) digits = '52' + digits;
+  return digits;
+}
+
+function waLink_(celular, message){
+  const phone = cleanPhone_(celular);
+  // Usamos api.whatsapp.com/send directo (en vez de wa.me) porque el
+  // redireccionamiento de wa.me corrompe emojis en algunos navegadores/dispositivos.
+  return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+}
+
+function waIconSVG_(){
+  return `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.5A10 10 0 1 0 12 2Zm0 18.2a8.1 8.1 0 0 1-4.2-1.2l-.3-.2-3 .9.9-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.5.1-.5.7-.7.8-.3.1-.5 0a6.6 6.6 0 0 1-2-1.2 7.3 7.3 0 0 1-1.4-1.7c-.1-.2 0-.4.1-.5l.4-.4a1.9 1.9 0 0 0 .3-.5.5.5 0 0 0 0-.5c-.1-.1-.5-1.3-.7-1.7s-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.5 4c.6.2 1.1.4 1.5.5a3.6 3.6 0 0 0 1.7.1 2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z"/></svg>`;
+}
+
+// ---------- Emojis como escapes Unicode (a prueba de problemas de codificacion) ----------
+const EMOJI = {
+  party:      '\u{1F389}', // party popper
+  card:       '\u{1F4B3}', // credit card
+  handshake:  '\u{1F91D}', // handshake
+  clipboard:  '\u{1F4CB}', // clipboard
+  idCard:     '\u{1FAAA}', // id card
+  house:      '\u{1F3E0}', // house
+  briefcase:  '\u{1F4BC}', // briefcase
+  memo:       '\u{1F4DD}', // memo
+  warning:    '\u{26A0}\u{FE0F}', // warning
+  envelope:   '\u{1F4E9}', // envelope
+  pin:        '\u{1F4CD}', // pin
+  check:      '\u{2705}',  // check mark
+  mobile:     '\u{1F4F2}', // mobile phone
+  smile:      '\u{1F60A}'  // smiling face
+};
+
+// Primer mensaje - variante "Sr."
+function waMsgPrimerSr_(c){
+  return `¡Felicidades y bienvenido a Banamex! ${EMOJI.party}
+
+Sr. ${c.nombre}
+
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+
+Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
+
+${EMOJI.clipboard} Documentación requerida:
+
+${EMOJI.idCard} INE vigente
+${EMOJI.house} Comprobante de domicilio (con una antigüedad no mayor a 3 meses)
+${EMOJI.briefcase} Comprobante de ingresos (3 estados de cuenta de nómina o débito)
+${EMOJI.memo} Número de folio
+
+${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físico.`;
+}
+
+// Primer mensaje - variante "Srta."
+function waMsgPrimerSrta_(c){
+  return `¡Felicidades y bienvenida a Banamex! ${EMOJI.party}
+
+Srta. ${c.nombre}
+
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+
+Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
+
+${EMOJI.clipboard} Documentación requerida:
+
+${EMOJI.idCard} INE vigente
+${EMOJI.house} Comprobante de domicilio (con una antigüedad no mayor a 3 meses)
+${EMOJI.briefcase} Comprobante de ingresos (3 estados de cuenta de nómina o débito)
+${EMOJI.memo} Número de folio
+
+${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físico.`;
+}
+
+// Segundo mensaje - recordatorio de entrega (neutro, sin género)
+function waMsgSegundo_(c){
+  return `${EMOJI.envelope} Estimado cliente:
+
+Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito Banamex. ${EMOJI.card}
+
+${EMOJI.pin} Para recibirla, es necesario que acuda a la sucursal de su preferencia dentro del horario de atención.
+
+${EMOJI.check} Le agradeceríamos nos pudiera confirmar si le será posible acudir el día de hoy, respondiendo a este mensaje. En caso de que no le sea posible asistir, por favor indíquenos para brindarle el apoyo correspondiente.
+
+${EMOJI.mobile} Quedamos atentos a su amable confirmación.
+
+¡Gracias por su atención! ${EMOJI.smile}`;
+}
+
+// Genera el/los botones de WhatsApp según la tabla ('t1' = primer mensaje, con opción Sr./Srta.; 't2' = segundo mensaje)
+function waAccionHTML_(c, kind){
+  if (kind === 't1'){
+    return `<div class="wa-actions">
+      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSr_(c))}" target="_blank" rel="noopener">${waIconSVG_()} Sr.</a>
+      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSrta_(c))}" target="_blank" rel="noopener">${waIconSVG_()} Srta.</a>
+    </div>`;
+  }
+  return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" target="_blank" rel="noopener">${waIconSVG_()} WhatsApp</a>`;
+}
  
 // ---------- utilidades ----------
 function toast(msg){
@@ -219,18 +324,18 @@ function renderRecordatorios(){
   const hoyRows = CLIENTES.filter(c => c.fecha === HOY && c.status === '');
   // Tabla 2: clientes con cita HOY a quienes ya se les mandó el 1er mensaje y falta el 2do
   const citaRows = CLIENTES.filter(c => c.fechaCita === HOY && c.status === '1er Mensaje');
-  fillTable('tabla-hoy', hoyRows, STATUS_OPTIONS_T1);
-  fillTable('tabla-citas', citaRows, STATUS_OPTIONS_T2);
+  fillTable('tabla-hoy', hoyRows, STATUS_OPTIONS_T1, 't1');
+  fillTable('tabla-citas', citaRows, STATUS_OPTIONS_T2, 't2');
 }
  
-function fillTable(tbodyId, rows, statusOptions){
+function fillTable(tbodyId, rows, statusOptions, kind){
   const tbody = document.getElementById(tbodyId);
   if (!tbody){
     console.warn('fillTable: tbody not found', tbodyId);
     return;
   }
   if (rows.length === 0){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Sin clientes pendientes</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Sin clientes pendientes</td></tr>`;
     return;
   }
   tbody.innerHTML = rows.map(c => `
@@ -242,6 +347,7 @@ function fillTable(tbodyId, rows, statusOptions){
       <td>${c.tdc || '—'}</td>
       <td>${c.fechaCita || '—'}</td>
       <td>${statusSelectHTML(c.row, c.status, statusOptions)}</td>
+      <td>${waAccionHTML_(c, kind)}</td>
     </tr>
   `).join('');
 }

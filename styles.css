@@ -1,5 +1,4 @@
-
-  :root{
+:root{
     --navbar-height:64px;
     --bg:#eef1f6;
     --surface:#ffffff;
@@ -698,6 +697,42 @@
     opacity:0; pointer-events:none; transition:.25s ease;
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+
+  .wa-actions{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .wa-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:#1fae5a;
+    color:#fff;
+    text-decoration:none;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:700;
+    padding:7px 13px;
+    border-radius:var(--radius-pill);
+    box-shadow:0 2px 8px rgba(31,174,90,.25);
+    transition:.15s ease;
+    white-space:nowrap;
+  }
+  .wa-btn:hover{
+    background:#189149;
+    transform:translateY(-1px);
+    box-shadow:0 6px 14px rgba(31,174,90,.32);
+  }
+  body.dark-mode .wa-btn{
+    background:#22c55e;
+    box-shadow:0 2px 8px rgba(34,197,94,.2);
+  }
+  body.dark-mode .wa-btn:hover{
+    background:#16a34a;
+    box-shadow:0 6px 14px rgba(34,197,94,.28);
+  }
 
   .config-banner{
     background:#fff5f0;
