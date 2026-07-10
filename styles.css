@@ -212,7 +212,7 @@
   }
 
   main{
-    max-width:1120px;
+    max-width:1400px;
     margin:0 auto;
     padding:34px 20px 90px;
     position:relative;
@@ -404,7 +404,7 @@
     width:100%;
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:center;
     gap:10px;
     border:1px solid rgba(0,0,0,.08);
     border-radius:999px;
