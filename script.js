@@ -2,7 +2,7 @@
    CONFIGURA AQUÍ LA URL DE TU WEB APP DE APPS SCRIPT
    (Deploy > New deployment > Web app > copiar "URL de la app")
    ========================================================= */
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjzcY-8FzOj8vLLq4m5-IIqUsdV8RQP2t8sgyzmZTwo8GroRvW4QRoy5pzRTOuN1dx/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfjnepyMrXCbjlbqADlFiTDPeOyuIEArJAjrRdJF2HjHNxJ4aSbzlnrIIVw96k31kB/exec';
  
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
  
