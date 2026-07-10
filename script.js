@@ -81,7 +81,7 @@ function waMsgPrimerSr_(c){
 
 Sr. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito ${c.tdc} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -101,7 +101,7 @@ function waMsgPrimerSrta_(c){
 
 Srta. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito ${c.tdc} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -119,7 +119,7 @@ ${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físic
 function waMsgSegundo_(c){
   return `${EMOJI.envelope} Estimado cliente:
 
-Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito Banamex. ${EMOJI.card}
+Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito ${c.tdc} Banamex. ${EMOJI.card}
 
 ${EMOJI.pin} Para recibirla, es necesario que acuda a la sucursal de su preferencia dentro del horario de atención.
 
