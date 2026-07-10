@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
-<script src="script.js" async></script>
+<script src="script.js" defer></script>
+<script src="theme-toggle.js" defer></script>
 </head>
 <body>
 <div class="navbar">
@@ -30,19 +31,23 @@
     <div class="panel">
       <div class="panel-title">Clientes de hoy</div>
       <div class="panel-sub">Clientes de hoy (<span class="today-label"></span>).</div>
-      <table class="grid">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
-        <tbody id="tabla-hoy"></tbody>
-      </table>
+      <div class="table-shell">
+        <table class="grid">
+          <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
+          <tbody id="tabla-hoy"></tbody>
+        </table>
+      </div>
     </div>
  
     <div class="panel">
       <div class="panel-title">Recordatorios</div>
       <div class="panel-sub">Clientes cuya <b>Fecha cita</b> es hoy (<span class="today-label"></span>).</div>
-      <table class="grid">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
-        <tbody id="tabla-citas"></tbody>
-      </table>
+      <div class="table-shell">
+          <table class="grid">
+            <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
+            <tbody id="tabla-citas"></tbody>
+          </table>
+      </div>
     </div>
   </section>
  
@@ -90,10 +95,14 @@
         </div>
       </div>
  
-      <table class="grid" id="tabla-clientes-wrap" style="display:none;">
-        <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
-        <tbody id="tabla-clientes"></tbody>
-      </table>
+      <div class="table-shell" id="tabla-clientes-wrap" style="display:none;">
+        <div class="table-scroll">
+          <table class="grid">
+            <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
+            <tbody id="tabla-clientes"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </section>
 </main>
