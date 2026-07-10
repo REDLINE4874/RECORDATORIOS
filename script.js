@@ -428,7 +428,7 @@ function startApp(){
   try{
     console.log('startApp: calling loadData');
     loadData();
-    window._loadInterval = setInterval(loadData, 60000);
+    window._loadInterval = setInterval(loadData, 300000);
   }catch(e){
     console.error('startApp error', e);
     toast('Error iniciando la app');
