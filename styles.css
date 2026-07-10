@@ -683,10 +683,11 @@
     font-size:11.5px;
     font-weight:800;
     letter-spacing:.2px;
+    box-shadow:0 2px 8px rgba(0,0,0,.10);
   }
-  .badge.st-1{background:#f7f7f7; color:#4b5563;}
-  .badge.st-2{background:#f7f7f7; color:#2f6b3d;}
-  .badge.st-0{background:#f3f4f6; color:#6b7280; font-weight:700;}
+  .badge.st-1{background:#ffffff1d; color:#f3c77a;}
+  .badge.st-2{background:#ffffff1d; color:#76d58d;}
+  .badge.st-0{background:#ffffff1d; color:#6b7280; font-weight:700;}
   body.dark-mode .badge.st-0{background:#1f2937; color:#cbd5e1;}
   body.dark-mode .badge.st-1{background:#202733; color:#f3c77a;}
   body.dark-mode .badge.st-2{background:#15261d; color:#76d58d;}
