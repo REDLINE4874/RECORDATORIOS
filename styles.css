@@ -26,11 +26,11 @@
 
     --gray-100:#f5f5f5;
 
-    --radius-xl:22px;
-    --radius-lg:16px;
-    --radius-md:12px;
-    --radius-sm:9px;
-    --radius-pill:999px;
+    --radius-xl:10px;
+    --radius-lg:10px;
+    --radius-md:10px;
+    --radius-sm:10px;
+    --radius-pill:10px;
 
     --shadow-sm:0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15,23,42,.05);
     --shadow-md:0 10px 24px rgba(15, 23, 42, 0.07);
@@ -113,7 +113,7 @@
   .navbar h1::before{
     content:'';
     width:10px; height:10px;
-    border-radius:50%;
+    border-radius:10px;
     background:linear-gradient(135deg, #111111, #555555);
     display:inline-block;
     box-shadow:0 0 0 4px rgba(17,17,17,.08);
@@ -407,9 +407,9 @@
     justify-content:space-between;
     gap:10px;
     border:1px solid rgba(0,0,0,.08);
-    border-radius:999px;
-    padding:10px 14px;
-    background:#fff;
+    border-radius: 10px;
+    padding:5px 10px;
+    background:#efefef73;
     color:var(--ink);
     cursor:pointer;
     font-family:inherit;
@@ -565,12 +565,12 @@
   }
   .filter-group{
     display:flex;
-    flex-direction:column;
-    gap:4px;
+    align-items:center;
+    gap:8px;
     min-width:150px;
   }
   .filter-label{
-    font-size:12px;
+    font-size:13px;
     font: weight 700px;;
     letter-spacing:.3px;
     color:var(--brand-600);
@@ -578,7 +578,7 @@
   body.dark-mode .filter-label{color:#9db4e8;}
   .filter-group .custom-select{font-size:13.5px;}
   .filter-group .custom-select__trigger{
-    padding:11px 16px;
+    padding:7px 16px;
     font-weight:600;
   }
   .btn-refresh{
@@ -591,12 +591,11 @@
     font-family:inherit;
     font-size:13.5px;
     font-weight:700;
-    padding:11px 18px;
+    padding:7px 16px;
     border-radius:var(--radius-lg);
     cursor:pointer;
     box-shadow:var(--shadow-sm);
     transition:.15s ease;
-    height:41px;
   }
   .btn-refresh:hover{transform:translateY(-1px); box-shadow:var(--shadow-md);}
   body.dark-mode .btn-refresh:hover{box-shadow:0 8px 16px rgba(0,0,0,.24);}
