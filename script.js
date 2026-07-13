@@ -81,7 +81,7 @@ function waMsgPrimerSr_(c){
 
 Sr. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito ${c.tdc} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -101,7 +101,7 @@ function waMsgPrimerSrta_(c){
 
 Srta. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito ${c.tdc} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -119,7 +119,7 @@ ${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físic
 function waMsgSegundo_(c){
   return `${EMOJI.envelope} Estimado cliente:
 
-Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito ${c.tdc} Banamex. ${EMOJI.card}
+Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito Banamex. ${EMOJI.card}
 
 ${EMOJI.pin} Para recibirla, es necesario que acuda a la sucursal de su preferencia dentro del horario de atención.
 
@@ -161,7 +161,19 @@ function statusSelectHTML(row, status, options){
   const items = options.map(o =>
     `<li class="custom-select__option ${status===o.value?'selected':''}" data-value="${o.value}" role="option">${o.label}</li>`
   ).join('');
-  return `<div class="custom-select ${cls.replace('st-0','')}" data-row="${row}">
+  return `<div class="custom-select ${cls.replace('st-0','')}" data-kind="status" data-row="${row}">
+    <button type="button" class="custom-select__trigger" aria-haspopup="listbox" aria-expanded="false">${label} <span class="custom-select__arrow">▾</span></button>
+    <ul class="custom-select__options" role="listbox">${items}</ul>
+  </div>`;
+}
+
+// Dropdown genérico (mismo look & feel que statusSelectHTML) para los filtros de Clientes.
+function filterSelectHTML(filterName, value, options){
+  const label = options.find(o => String(o.value)===String(value))?.label || '';
+  const items = options.map(o =>
+    `<li class="custom-select__option ${String(value)===String(o.value)?'selected':''}" data-value="${o.value}" role="option">${o.label}</li>`
+  ).join('');
+  return `<div class="custom-select" data-kind="filter" data-filter="${filterName}">
     <button type="button" class="custom-select__trigger" aria-haspopup="listbox" aria-expanded="false">${label} <span class="custom-select__arrow">▾</span></button>
     <ul class="custom-select__options" role="listbox">${items}</ul>
   </div>`;
@@ -177,6 +189,20 @@ async function updateStatusCustom(custom, value){
     renderRecordatorios();
   }catch(err){
     toast('Error al guardar');
+  }
+}
+
+// Aplica el valor elegido en un filtro de Clientes (Año/Mes/Semana) y refresca lo que dependa de él.
+function handleFilterSelect(filterName, value){
+  if (filterName === 'anio'){
+    clientesFiltro.anio = Number(value);
+    fillMesesFiltro();
+  } else if (filterName === 'mes'){
+    clientesFiltro.mes = Number(value);
+    fillSemanasFiltro();
+  } else if (filterName === 'semana'){
+    clientesFiltro.semana = Number(value);
+    renderTablaClientes();
   }
 }
 
@@ -201,7 +227,11 @@ document.addEventListener('click', event => {
       delete optionsList.dataset.moved;
       delete optionsList.dataset.ownerId;
     }
-    updateStatusCustom(custom, option.dataset.value);
+    if (custom.dataset.kind === 'filter'){
+      handleFilterSelect(custom.dataset.filter, option.dataset.value);
+    } else {
+      updateStatusCustom(custom, option.dataset.value);
+    }
     return;
   }
 
@@ -293,7 +323,7 @@ async function loadData(){
     const last = document.getElementById('lastSync');
     if (last) last.textContent = 'sincronizado ' + new Date().toLocaleTimeString();
     renderRecordatorios();
-    renderAnios();
+    initClientesFiltros();
   }catch(err){
     console.error('loadData error', err);
     const last = document.getElementById('lastSync');
@@ -313,7 +343,7 @@ async function loadData(){
       if (last) last.textContent = 'datos de ejemplo';
       toast('Mostrando datos de ejemplo (modo local)');
       renderRecordatorios();
-      renderAnios();
+      initClientesFiltros();
     }
   }
 }
@@ -352,46 +382,7 @@ function fillTable(tbodyId, rows, statusOptions, kind){
   `).join('');
 }
  
-// ---------- acordeón AÑO > MES > SEMANA ----------
-const blockState = {
-  anio:   { locked:false, open:true },
-  mes:    { locked:true,  open:false },
-  semana: { locked:true,  open:false }
-};
- 
-function setHeaderLocked(name, locked){
-  document.getElementById('hdr-' + name).classList.toggle('locked', locked);
-  blockState[name].locked = locked;
-}
- 
-function setOpen(name, open){
-  document.getElementById('content-' + name).classList.toggle('open', open);
-  document.getElementById('chev-' + name).classList.toggle('rot', open);
-  blockState[name].open = open;
-}
- 
-function toggleBlock(name){
-  if (blockState[name].locked) return;
-  setOpen(name, !blockState[name].open);
-}
- 
-function resetFromMes(){
-  setHeaderLocked('mes', true);
-  setOpen('mes', false);
-  document.getElementById('val-mes').textContent = '';
-  document.getElementById('box-mes').innerHTML = '';
-  resetFromSemana();
-}
- 
-function resetFromSemana(){
-  setHeaderLocked('semana', true);
-  setOpen('semana', false);
-  document.getElementById('val-semana').textContent = '';
-  document.getElementById('box-semana').innerHTML = '';
-  document.getElementById('tabla-clientes-wrap').style.display = 'none';
-}
- 
-// ---------- CLIENTES: AÑO > MES > SEMANA ----------
+// ---------- CLIENTES: filtros Año / Mes / Semana ----------
 function parseYMD(str){
   // str en formato yyyy-MM-dd
   const [y,m,d] = str.split('-').map(Number);
@@ -423,100 +414,114 @@ function weekIndexInMonth(dateStr){
   return diffWeeks + 1;
 }
  
-// Etiqueta "Semana N (29 jun – 5 jul)" para una fecha dada
-function weekRangeLabel(dateStr, weekIdx){
-  const date = toDate(dateStr);
-  const monday = mondayOf(date);
+// Etiqueta "Semana N (29 jun – 5 jul)" a partir de año/mes/índice de semana
+function weekRangeLabelByIndex(year, month, weekIdx){
+  const firstOfMonth = new Date(year, month-1, 1);
+  const mondayFirst = mondayOf(firstOfMonth);
+  const monday = new Date(mondayFirst);
+  monday.setDate(monday.getDate() + (weekIdx-1)*7);
   const sunday = new Date(monday);
   sunday.setDate(sunday.getDate() + 6);
   const fmt = d => d.toLocaleDateString('es-MX', {day:'numeric', month:'short'});
   return `Semana ${weekIdx} (${fmt(monday)} – ${fmt(sunday)})`;
 }
  
-function renderAnios(){
+// Fecha actual del dispositivo (para autocompletar los filtros)
+function fechaActual(){
+  const d = new Date();
+  return {y:d.getFullYear(), m:d.getMonth()+1, d:d.getDate()};
+}
+ 
+let clientesFiltro = { anio:null, mes:null, semana:null };
+ 
+// Construye el filtro de AÑO. Se autoselecciona el año actual.
+function initClientesFiltros(){
+  const hoy = fechaActual();
   const conFecha = CLIENTES.filter(c => c.fecha);
-  const anios = [...new Set(conFecha.map(c => parseYMD(c.fecha).y))].sort((a,b)=>b-a);
+  let anios = [...new Set(conFecha.map(c => parseYMD(c.fecha).y))];
+  if (!anios.includes(hoy.y)) anios.push(hoy.y);
+  anios.sort((a,b) => b-a);
  
-  resetFromMes();
-  document.getElementById('val-anio').textContent = '';
-  setOpen('anio', true);
+  clientesFiltro.anio = hoy.y;
  
-  const box = document.getElementById('box-anio');
-  if (anios.length === 0){
-    box.classList.add('empty');
-    box.innerHTML = '';
-    return;
+  const opcionesAnio = anios.map(a => ({ value:a, label:String(a) }));
+  document.getElementById('filter-anio').innerHTML = filterSelectHTML('anio', clientesFiltro.anio, opcionesAnio);
+ 
+  fillMesesFiltro();
+}
+ 
+// Construye el filtro de MES para el año seleccionado. Autoselecciona el mes actual si el año coincide.
+function fillMesesFiltro(){
+  const hoy = fechaActual();
+  const rowsAnio = CLIENTES.filter(c => c.fecha && parseYMD(c.fecha).y === clientesFiltro.anio);
+  let meses = [...new Set(rowsAnio.map(c => parseYMD(c.fecha).m))];
+  if (clientesFiltro.anio === hoy.y && !meses.includes(hoy.m)) meses.push(hoy.m);
+  if (meses.length === 0) meses = [hoy.m];
+  meses.sort((a,b) => a-b);
+ 
+  clientesFiltro.mes = (clientesFiltro.anio === hoy.y) ? hoy.m : meses[meses.length-1];
+ 
+  const opcionesMes = meses.map(m => ({ value:m, label:MESES[m-1] }));
+  document.getElementById('filter-mes').innerHTML = filterSelectHTML('mes', clientesFiltro.mes, opcionesMes);
+ 
+  fillSemanasFiltro();
+}
+ 
+// Construye el filtro de SEMANA para año/mes seleccionados. Autoselecciona la semana actual si aplica.
+function fillSemanasFiltro(){
+  const hoy = fechaActual();
+  const rowsMes = CLIENTES.filter(c => c.fecha && parseYMD(c.fecha).y === clientesFiltro.anio && parseYMD(c.fecha).m === clientesFiltro.mes);
+  let semanas = [...new Set(rowsMes.map(c => weekIndexInMonth(c.fecha)))];
+ 
+  const esMesActual = clientesFiltro.anio === hoy.y && clientesFiltro.mes === hoy.m;
+  let hoyWeek = null;
+  if (esMesActual){
+    const hoyStr = `${hoy.y}-${String(hoy.m).padStart(2,'0')}-${String(hoy.d).padStart(2,'0')}`;
+    hoyWeek = weekIndexInMonth(hoyStr);
+    if (!semanas.includes(hoyWeek)) semanas.push(hoyWeek);
   }
-  box.classList.remove('empty');
-  box.innerHTML = anios.map(a => `<button class="chip" data-year="${a}" onclick="selectAnio(${a}, this)">${a} <span style="opacity:.6">(${conFecha.filter(c=>parseYMD(c.fecha).y===a).length})</span></button>`).join('');
+  if (semanas.length === 0) semanas = [1];
+  semanas.sort((a,b) => a-b);
+ 
+  clientesFiltro.semana = esMesActual ? hoyWeek : semanas[semanas.length-1];
+ 
+  const opcionesSemana = semanas.map(s => ({ value:s, label:weekRangeLabelByIndex(clientesFiltro.anio, clientesFiltro.mes, s) }));
+  document.getElementById('filter-semana').innerHTML = filterSelectHTML('semana', clientesFiltro.semana, opcionesSemana);
+ 
+  renderTablaClientes();
 }
  
-function selectAnio(year, btn){
-  document.querySelectorAll('#box-anio .chip').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
- 
-  resetFromMes(); // limpia mes y semana antes de repoblar
- 
-  const boxMes = document.getElementById('box-mes');
-  const rows = CLIENTES.filter(c => c.fecha && parseYMD(c.fecha).y === year);
-  const meses = [...new Set(rows.map(c => parseYMD(c.fecha).m))].sort((a,b)=>a-b);
- 
-  boxMes.innerHTML = meses.map(m => `<button class="chip" data-month="${m}" onclick="selectMes(${year}, ${m}, this)">${MESES[m-1]} <span style="opacity:.6">(${rows.filter(c=>parseYMD(c.fecha).m===m).length})</span></button>`).join('');
- 
-  document.getElementById('val-anio').textContent = '· ' + year;
-  setHeaderLocked('mes', false);
-  setOpen('anio', false);
-  setOpen('mes', true);
-}
- 
-function selectMes(year, month, btn){
-  document.querySelectorAll('#box-mes .chip').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
- 
-  resetFromSemana();
- 
-  const boxSemana = document.getElementById('box-semana');
-  const rows = CLIENTES.filter(c => c.fecha && parseYMD(c.fecha).y === year && parseYMD(c.fecha).m === month);
-  const semanas = [...new Set(rows.map(c => weekIndexInMonth(c.fecha)))].sort((a,b)=>a-b);
- 
-  boxSemana.innerHTML = semanas.map(s => {
-    const rowsInWeek = rows.filter(c => weekIndexInMonth(c.fecha) === s);
-    const label = weekRangeLabel(rowsInWeek[0].fecha, s);
-    return `<button class="chip" data-week="${s}" onclick="selectSemana(${year}, ${month}, ${s}, this)">${label} <span style="opacity:.6">(${rowsInWeek.length})</span></button>`;
-  }).join('');
- 
-  document.getElementById('val-mes').textContent = '· ' + MESES[month-1];
-  setHeaderLocked('semana', false);
-  setOpen('mes', false);
-  setOpen('semana', true);
-}
- 
-function selectSemana(year, month, week, btn){
-  document.querySelectorAll('#box-semana .chip').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
- 
+function renderTablaClientes(){
   const rows = CLIENTES.filter(c => c.fecha &&
-    parseYMD(c.fecha).y === year &&
-    parseYMD(c.fecha).m === month &&
-    weekIndexInMonth(c.fecha) === week
+    parseYMD(c.fecha).y === clientesFiltro.anio &&
+    parseYMD(c.fecha).m === clientesFiltro.mes &&
+    weekIndexInMonth(c.fecha) === clientesFiltro.semana
   );
  
   const tbody = document.getElementById('tabla-clientes');
-  tbody.innerHTML = rows.map(c => `
-    <tr>
-      <td>${c.nombre}</td>
-      <td>${c.celular}</td>
-      <td>${c.folio || '—'}</td>
-      <td>${c.fecha || '—'}</td>
-      <td>${c.tdc || '—'}</td>
-      <td>${c.fechaCita || '—'}</td>
-      <td><span class="badge ${statusClass(c.status)}">${c.status || 'Sin enviar'}</span></td>
-    </tr>
-  `).join('');
-  document.getElementById('tabla-clientes-wrap').style.display = 'table';
-  document.getElementById('val-semana').textContent = '· Semana ' + week;
-  setOpen('semana', false);
+  if (rows.length === 0){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Sin clientes en este periodo</td></tr>`;
+  } else {
+    tbody.innerHTML = rows.map(c => `
+      <tr>
+        <td>${c.nombre}</td>
+        <td>${c.celular}</td>
+        <td>${c.folio || '—'}</td>
+        <td>${c.fecha || '—'}</td>
+        <td>${c.tdc || '—'}</td>
+        <td>${c.fechaCita || '—'}</td>
+        <td><span class="badge ${statusClass(c.status)}">${c.status || 'Sin enviar'}</span></td>
+      </tr>
+    `).join('');
+  }
+ 
+  const countLabel = document.getElementById('clientes-count-label');
+  if (countLabel) countLabel.textContent = `${rows.length} cliente${rows.length===1?'':'s'} en el periodo seleccionado.`;
 }
+ 
+document.getElementById('btn-refrescar-clientes')?.addEventListener('click', () => {
+  loadData();
+});
  
 // ---------- tabs ----------
 document.querySelectorAll('.tab-btn').forEach(btn => {
