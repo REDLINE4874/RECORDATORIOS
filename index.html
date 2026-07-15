@@ -1,90 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Formalización</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css" />
-<script src="script.js" charset="utf-8" defer></script>
-<script src="theme-toggle.js" charset="utf-8" defer></script>
-</head>
-<body>
-<div class="navbar">
-  <h1>Formalización</h1>
-  <div class="tabs">
-    <button class="tab-btn active" data-view="recordatorios">Recordatorios</button>
-    <button class="tab-btn" data-view="clientes">Clientes</button>
-  </div>
-  <div class="status-dot"><span class="dot"></span><span id="lastSync">cargando…</span></div>
-</div>
- 
-<main>
-  <div id="configBanner" class="config-banner">
-    ⚠️ Configura la URL de tu Web App de Apps Script en la constante <code>APPS_SCRIPT_URL</code> dentro de este archivo.
-  </div>
- 
-  <!-- VISTA RECORDATORIOS -->
-  <section id="view-recordatorios" class="view active">
-    <div class="panel">
-      <div class="panel-title">Clientes de hoy</div>
-      
-      <div class="table-shell">
-        <table class="grid">
-          <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th><th>Acción</th></tr></thead>
-          <tbody id="tabla-hoy"></tbody>
-        </table>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formalización</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" charset="utf-8" defer></script>
+    <script src="theme-toggle.js" charset="utf-8" defer></script>
+  </head>
+  <body>
+    <div class="navbar">
+      <h1>Formalización</h1>
+      <div class="tabs">
+        <button class="tab-btn active" data-view="recordatorios">
+          Recordatorios
+        </button>
+        <button class="tab-btn" data-view="clientes">Clientes</button>
+      </div>
+      <div class="status-dot">
+        <span class="dot"></span><span id="lastSync">cargando…</span>
       </div>
     </div>
- 
-    <div class="panel">
-      <div class="panel-title">Recordatorios</div>
-      
-      <div class="table-shell">
-          <table class="grid">
-            <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th><th>Acción</th></tr></thead>
-            <tbody id="tabla-citas"></tbody>
-          </table>
-      </div>
-    </div>
-  </section>
- 
-  <!-- VISTA CLIENTES -->
-  <section id="view-clientes" class="view">
-    <div class="panel">
-      <div class="panel-title" style="margin-top:-4px;">Base de datos de clientes.</div>
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label class="filter-label">Año</label>
-          <div id="filter-anio"></div>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label">Mes</label>
-          <div id="filter-mes"></div>
-        </div>
-        <div class="filter-group">
-          <label class="filter-label">Semana</label>
-          <div id="filter-semana"></div>
-        </div>
-        <button type="button" class="btn-refresh" id="btn-refrescar-clientes">↻ Actualizar</button>
+
+    <main>
+      <div id="configBanner" class="config-banner">
+        ⚠️ Configura la URL de tu Web App de Apps Script en la constante
+        <code>APPS_SCRIPT_URL</code> dentro de este archivo.
       </div>
 
-      <div class="panel-sub" id="clientes-count-label" style="margin-top:16px;"></div>
-      <div class="table-shell" id="tabla-clientes-wrap">
-        <div class="table-scroll">
-          <table class="grid">
-            <thead><tr><th>Nombre</th><th>Celular</th><th>Folio</th><th>Fecha</th><th>TDC</th><th>Fecha cita</th><th>Status</th></tr></thead>
-            <tbody id="tabla-clientes"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
- 
-<div class="toast" id="toast"></div>
+      <!-- VISTA RECORDATORIOS -->
+      <section id="view-recordatorios" class="view active">
+        <div class="panel">
+          <div class="panel-title">Clientes de hoy</div>
 
-</body>
+          <div class="table-shell">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Folio</th>
+                  <th>Fecha</th>
+                  <th>TDC</th>
+                  <th>Fecha cita</th>
+                  <th>Status</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-hoy"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Recordatorios</div>
+
+          <div class="table-shell">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Celular</th>
+                  <th>Folio</th>
+                  <th>Fecha</th>
+                  <th>TDC</th>
+                  <th>Fecha cita</th>
+                  <th>Status</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-citas"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA CLIENTES -->
+      <section id="view-clientes" class="view">
+        <div class="panel">
+          <div class="panel-title" style="margin-top: -4px">
+            Base de datos de clientes.
+          </div>
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label class="filter-label">Año</label>
+              <div id="filter-anio"></div>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Mes</label>
+              <div id="filter-mes"></div>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">Semana</label>
+              <div id="filter-semana"></div>
+            </div>
+            <button
+              type="button"
+              class="btn-refresh"
+              id="btn-refrescar-clientes"
+            >
+              ↻ Actualizar
+            </button>
+          </div>
+
+          <div
+            class="panel-sub"
+            id="clientes-count-label"
+            style="margin-top: 16px"
+          ></div>
+          <div class="table-shell" id="tabla-clientes-wrap">
+            <div class="table-scroll">
+              <table class="grid">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Celular</th>
+                    <th>Folio</th>
+                    <th>Fecha</th>
+                    <th>TDC</th>
+                    <th>Fecha cita</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+  </body>
 </html>
