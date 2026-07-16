@@ -100,7 +100,9 @@ function productoNombre_(c) {
     c.nombreProducto ||
     c.tdc ||
     "Tarjeta de Crédito JOY";
-  return String(raw || "Tarjeta de Crédito JOY").trim() || "Tarjeta de Crédito JOY";
+  return (
+    String(raw || "Tarjeta de Crédito JOY").trim() || "Tarjeta de Crédito JOY"
+  );
 }
 
 // Primer mensaje - variante "Sr."
