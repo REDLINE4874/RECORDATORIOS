@@ -466,7 +466,7 @@
     transform:translateY(0);
   }
   .custom-select__option{
-    padding:10px 16px;
+    padding:10px;
     cursor:pointer;
     color:#101828;
     transition:background .15s ease, color .15s ease;

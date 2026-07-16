@@ -93,13 +93,24 @@ const EMOJI = {
   smile: "\u{1F60A}", // smiling face
 };
 
+function productoNombre_(c) {
+  const raw =
+    c.producto ||
+    c.productoNombre ||
+    c.nombreProducto ||
+    c.tdc ||
+    "Tarjeta de Crédito JOY";
+  return String(raw || "Tarjeta de Crédito JOY").trim() || "Tarjeta de Crédito JOY";
+}
+
 // Primer mensaje - variante "Sr."
 function waMsgPrimerSr_(c) {
+  const producto = productoNombre_(c);
   return `¡Felicidades y bienvenido a Banamex! ${EMOJI.party}
 
 Sr. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -115,11 +126,12 @@ ${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físic
 
 // Primer mensaje - variante "Srta."
 function waMsgPrimerSrta_(c) {
+  const producto = productoNombre_(c);
   return `¡Felicidades y bienvenida a Banamex! ${EMOJI.party}
 
 Srta. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su Tarjeta de Crédito JOY de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
