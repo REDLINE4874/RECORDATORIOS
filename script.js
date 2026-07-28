@@ -112,7 +112,7 @@ function waMsgPrimerSr_(c) {
 
 Sr. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su tarjeta ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
@@ -133,7 +133,7 @@ function waMsgPrimerSrta_(c) {
 
 Srta. ${c.nombre}
 
-Nos complace informarle que ya puede recoger su ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
+Nos complace informarle que ya puede recoger su tarjeta ${producto} de Entrega Inmediata ${EMOJI.card} en cualquiera de nuestras sucursales Banamex.
 
 Será un gusto darle la bienvenida y atenderle. Si tiene alguna duda o requiere información adicional, con gusto estamos para apoyarle. ${EMOJI.handshake}
 
