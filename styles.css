@@ -375,7 +375,7 @@
     border-bottom-color:rgba(255,255,255,.06);
   }
   table.grid td{
-    padding:13px 16px;
+    padding:8px 10px;
     font-size:12px;
     border-bottom:1px solid rgba(0,0,0,.05);
     color:var(--ink);
@@ -397,7 +397,7 @@
   .custom-select{
     position:relative;
     display:inline-flex;
-    width:100%;
+   
     font-size:12px;
   }
   .custom-select__trigger{
@@ -807,5 +807,5 @@
     .panel{padding:18px;}
     table.grid{font-size:12px;}
     table.grid th, table.grid td{padding:10px;}
-    .tab-btn{padding:8px 14px; font-size:12.5px;}
+    .tab-btn{padding:8px 10px; font-size:12.5px;}
   }
