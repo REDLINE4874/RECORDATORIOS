@@ -137,7 +137,7 @@ class ThemeToggle extends HTMLElement {
           background:#ffb648;
           box-shadow:0 3px 8px rgba(0,0,0,.25);
           transform:translateX(0);
-          transition:transform .55s cubic-bezier(.68,-0.4,.27,1.4), background .5s ease;
+          transition:transform .3s cubic-bezier(.68,-0.4,.27,1.4), background .3s ease;
         }
         .switch.dark .knob{
           transform:translateX(var(--tx));
