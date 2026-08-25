@@ -3,7 +3,7 @@
    (Deploy > New deployment > Web app > copiar "URL de la app")
    ========================================================= */
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyfjnepyMrXCbjlbqADlFiTDPeOyuIEArJAjrRdJF2HjHNxJ4aSbzlnrIIVw96k31kB/exec";
+  "https://script.google.com/macros/s/AKfycbw4s7CZuVpqR8uParyg1avtKb2z5nvFNBiGHchIDjXaCGIcuXXUMcrDejRX46a2iUY/exec";
 
 const MESES = [
   "Enero",
@@ -218,18 +218,38 @@ function filterSelectHTML(filterName, value, options) {
   </div>`;
 }
 
+/**
+ * ACTUALIZACIÓN OPTIMISTA:
+ * Antes: se esperaba la respuesta del fetch antes de tocar CLIENTES/UI,
+ * lo que hacía sentir la app lenta (1-3s+ de espera de Apps Script).
+ * Ahora: actualizamos el estado local y re-renderizamos de inmediato;
+ * el fetch corre en segundo plano y solo revertimos si falla.
+ */
 async function updateStatusCustom(custom, value) {
   const row = custom.dataset.row;
+  const c = CLIENTES.find((x) => x.row == row);
+  const previousStatus = c ? c.status : null;
+
+  // 1. Actualiza UI de inmediato (optimista)
+  if (c) c.status = value;
+  renderRecordatorios();
+  toast("Guardando...");
+
+  // 2. Envía el cambio al servidor en segundo plano
   try {
-    await fetch(
+    const res = await fetch(
       `${APPS_SCRIPT_URL}?action=updateStatus&row=${row}&status=${encodeURIComponent(value)}`,
     );
-    const c = CLIENTES.find((x) => x.row == row);
-    if (c) c.status = value;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    if (data.error) throw new Error(data.error);
     toast("Status actualizado ✓");
-    renderRecordatorios();
   } catch (err) {
-    toast("Error al guardar");
+    // 3. Si falla, revierte el estado local y notifica
+    console.error("updateStatus error", err);
+    if (c) c.status = previousStatus;
+    renderRecordatorios();
+    toast("Error al guardar, se revirtió el cambio");
   }
 }
 
