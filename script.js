@@ -266,7 +266,7 @@ function handleFilterSelect(filterName, value) {
     renderTablaClientes();
   }
 }
-
+///// SELECTS CUSTOMIZADOS (dropdowns) /////
 document.addEventListener("click", (event) => {
   // 1. CLIC EN UNA OPCIÓN
   const option = event.target.closest(".custom-select__option");
