@@ -268,31 +268,37 @@ function handleFilterSelect(filterName, value) {
 }
 
 document.addEventListener("click", (event) => {
-  // click on an option inside moved options list
+  // 1. CLIC EN UNA OPCIÓN
   const option = event.target.closest(".custom-select__option");
   if (option) {
     const optionsList = option.closest(".custom-select__options");
-    const ownerId = optionsList && optionsList.dataset.ownerId;
+    const ownerId = optionsList ? optionsList.getAttribute("data-owner-id") : null;
     const custom = ownerId
       ? document.querySelector(`.custom-select[data-cs-id="${ownerId}"]`)
       : option.closest(".custom-select");
+
     if (!custom) return;
-    // mark selection
+
+    // Marcar selección
     optionsList
       .querySelectorAll(".custom-select__option")
       .forEach((el) => el.classList.remove("selected"));
     option.classList.add("selected");
+
     const trigger = custom.querySelector(".custom-select__trigger");
-    if (trigger)
+    if (trigger) {
       trigger.innerHTML = `${option.textContent} <span class="custom-select__arrow">▾</span>`;
+    }
+
+    // Restaurar opciones si estaban flotando
     custom.classList.remove("open");
-    // restore options into the custom element if moved
-    if (optionsList.dataset.moved === "1") {
+    if (optionsList.getAttribute("data-moved") === "1") {
       custom.appendChild(optionsList);
       optionsList.classList.remove("floating-open");
-      delete optionsList.dataset.moved;
-      delete optionsList.dataset.ownerId;
+      optionsList.removeAttribute("data-moved");
+      optionsList.removeAttribute("data-owner-id");
     }
+
     if (custom.dataset.kind === "filter") {
       handleFilterSelect(custom.dataset.filter, option.dataset.value);
     } else {
@@ -301,68 +307,90 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  // click on trigger
+  // 2. CLIC EN EL TRIGGER (ABRIR / CERRAR)
   const trigger = event.target.closest(".custom-select__trigger");
   if (trigger) {
     const custom = trigger.closest(".custom-select");
-    // ensure a stable id to link options when moved
-    if (!custom.dataset.csId)
-      custom.dataset.csId = "cs-" + Math.random().toString(36).slice(2, 9);
-    const ownerId = custom.dataset.csId;
-    const isOpen = custom.classList.toggle("open");
-    // close other selects and restore their options if they were moved
+
+    // Asegurar un ID estable con setAttribute (más seguro que dataset para búsquedas DOM)
+    if (!custom.getAttribute("data-cs-id")) {
+      custom.setAttribute("data-cs-id", "cs-" + Math.random().toString(36).slice(2, 9));
+    }
+    const ownerId = custom.getAttribute("data-cs-id");
+
+    // Revisar estado exacto actual
+    const isCurrentlyOpen = custom.classList.contains("open");
+
+    // Cerrar otros selects y restaurar sus opciones
     document.querySelectorAll(".custom-select.open").forEach((el) => {
       if (el !== custom) {
         el.classList.remove("open");
-        const opt = el.querySelector(".custom-select__options");
-        if (opt && opt.dataset.moved === "1") {
+        const elId = el.getAttribute("data-cs-id");
+        const opt = el.querySelector(".custom-select__options") || document.querySelector(`.custom-select__options[data-owner-id="${elId}"]`);
+        if (opt && opt.getAttribute("data-moved") === "1") {
           el.appendChild(opt);
           opt.classList.remove("floating-open");
-          delete opt.dataset.moved;
-          delete opt.dataset.ownerId;
+          opt.removeAttribute("data-moved");
+          opt.removeAttribute("data-owner-id");
         }
       }
     });
-    trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
-    const options = custom.querySelector(".custom-select__options");
-    if (options) {
-      // if opening, move options to body to avoid clipping
-      if (isOpen) {
-        options.dataset.ownerId = ownerId;
-        document.body.appendChild(options);
-        options.dataset.moved = "1";
-        options.classList.add("floating-open");
+
+    if (isCurrentlyOpen) {
+      // SE ESTÁ CERRANDO: Regresamos las opciones a su caja original
+      custom.classList.remove("open");
+      trigger.setAttribute("aria-expanded", "false");
+
+      const options = document.querySelector(`.custom-select__options[data-owner-id="${ownerId}"]`);
+      if (options && options.getAttribute("data-moved") === "1") {
+        custom.appendChild(options);
+        options.classList.remove("floating-open");
+        options.removeAttribute("data-moved");
+        options.removeAttribute("data-owner-id");
       }
-      const rect = trigger.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const dropdownHeight = Math.min(options.scrollHeight || 220, 220);
-      const openBelow = rect.bottom + 12 + dropdownHeight < viewportHeight;
-      options.style.width = `${rect.width}px`;
-      options.style.left = `${rect.left}px`;
-      if (openBelow) {
-        options.style.top = `${rect.bottom + 8}px`;
-        options.style.bottom = "auto";
-      } else {
-        options.style.top = "auto";
-        options.style.bottom = `${viewportHeight - rect.top + 8}px`;
+    } else {
+      // SE ESTÁ ABRIENDO: Movemos las opciones al body para evitar recortes
+      custom.classList.add("open");
+      trigger.setAttribute("aria-expanded", "true");
+
+      const options = custom.querySelector(".custom-select__options");
+      if (options) {
+        options.setAttribute("data-owner-id", ownerId);
+        options.setAttribute("data-moved", "1");
+        document.body.appendChild(options);
+        options.classList.add("floating-open");
+
+        const rect = trigger.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownHeight = Math.min(options.scrollHeight || 220, 220);
+        const openBelow = rect.bottom + 12 + dropdownHeight < viewportHeight;
+
+        options.style.width = `${rect.width}px`;
+        options.style.left = `${rect.left}px`;
+        if (openBelow) {
+          options.style.top = `${rect.bottom + 8}px`;
+          options.style.bottom = "auto";
+        } else {
+          options.style.top = "auto";
+          options.style.bottom = `${viewportHeight - rect.top + 8}px`;
+        }
       }
     }
     return;
   }
 
-  // click elsewhere: close all opens and restore moved option lists
-  document
-    .querySelectorAll(".custom-select.open")
-    .forEach((el) => el.classList.remove("open"));
+  // 3. CLIC FUERA DE CUALQUIER SELECT
+  document.querySelectorAll(".custom-select.open").forEach((el) => {
+    el.classList.remove("open");
+  });
   document.querySelectorAll(".custom-select__options").forEach((opt) => {
-    if (opt.dataset.moved === "1") {
-      const owner = document.querySelector(
-        `.custom-select[data-cs-id="${opt.dataset.ownerId}"]`,
-      );
+    if (opt.getAttribute("data-moved") === "1") {
+      const elId = opt.getAttribute("data-owner-id");
+      const owner = document.querySelector(`.custom-select[data-cs-id="${elId}"]`);
       if (owner) owner.appendChild(opt);
       opt.classList.remove("floating-open");
-      delete opt.dataset.moved;
-      delete opt.dataset.ownerId;
+      opt.removeAttribute("data-moved");
+      opt.removeAttribute("data-owner-id");
     }
   });
 });
