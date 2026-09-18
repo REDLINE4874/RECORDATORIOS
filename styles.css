@@ -38,7 +38,7 @@
     --shadow-xl:0 24px 54px rgba(17, 24, 39, 0.12);
     --shadow-soft:0 6px 16px rgba(15, 23, 42, 0.04);
 
-    font-family: "Aptos", "Segoe UI", Arial, sans-serif;
+    font-family: "Quicksand", sans-serif;
   }
   *{box-sizing:border-box;}
   *:focus-visible{outline:2px solid var(--brand-500); outline-offset:2px; border-radius:4px;}
