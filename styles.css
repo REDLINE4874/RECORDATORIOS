@@ -243,7 +243,7 @@
     content:'';
     position:absolute;
     inset:-1px;
-    background:linear-gradient(120deg, rgba(255,255,255,.18), transparent 38%, rgba(255,255,255,.08));
+    background:linear-gradient(0deg, rgba(255, 255, 255, 0.101), transparent 38%, rgba(255,255,255,.08));
     pointer-events:none;
     z-index:0;
   }
@@ -253,7 +253,7 @@
     inset:auto -30px -40px auto;
     width:140px;
     height:140px;
-    background:radial-gradient(circle, rgba(255,255,255,.14), transparent 70%);
+    
     pointer-events:none;
     z-index:0;
   }
