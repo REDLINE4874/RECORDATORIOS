@@ -957,6 +957,78 @@ body.dark-mode .badge.st-2 { background: #15261d; color: #76d58d; }
   transform: translateX(-50%) translateY(-6px);
 }
 
+.folio-dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-xl);
+}
+
+.folio-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.folio-dialog form {
+  padding: 24px;
+}
+
+.folio-dialog__header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.folio-dialog__header p {
+  margin: 8px 0 20px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.folio-dialog__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.folio-dialog__field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.folio-dialog__field input {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  font: inherit;
+  font-size: 14px;
+}
+
+.folio-dialog__field input:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+
+.folio-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.folio-dialog__actions .wa-btn {
+  font-size: 13px;
+}
+
 .wa-actions {
   display: flex;
   gap: 6px;
@@ -979,6 +1051,11 @@ body.dark-mode .badge.st-2 { background: #15261d; color: #76d58d; }
   box-shadow: 0 2px 8px rgba(31, 174, 90, 0.25);
   transition: 0.3s ease;
   white-space: nowrap;
+}
+
+button.wa-btn {
+  border: 0;
+  cursor: pointer;
 }
 
 .wa-btn:hover {
@@ -1095,5 +1172,12 @@ body.dark-mode .wa-btn:hover {
   .tab-btn {
     padding: 8px 10px;
     font-size: 12.5px;
+  }
+  .folio-dialog form {
+    padding: 20px;
+  }
+  .folio-dialog__actions > button {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 }

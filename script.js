@@ -162,8 +162,8 @@ ${EMOJI.mobile} Quedamos atentos a su amable confirmación.
 ¡Gracias por su atención! ${EMOJI.smile}`;
 }
 
-function waMsgFolio_(c) {
-  return `Buen día, le compartimos su numero de folio con el cual podrá recoger su tarjeta de crédito: ${c.folio || "—"}`;
+function waMsgFolio_(folio) {
+  return `Buen día, le compartimos su numero de folio con el cual podrá recoger su tarjeta de crédito: ${folio}`;
 }
 
 // Genera el/los botones de WhatsApp según la tabla ('t1' = primer mensaje, con opción Sr./Srta.; 't2' = segundo mensaje)
@@ -177,8 +177,8 @@ function waAccionHTML_(c, kind) {
   return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" target="_blank" rel="noopener">${waIconSVG_()} WhatsApp</a>`;
 }
 
-function waFolioAccionHTML_(c) {
-  return `<a class="wa-btn" href="${waLink_(c.celular, waMsgFolio_(c))}" target="_blank" rel="noopener" aria-label="Enviar folio por WhatsApp a ${c.nombre}">${waIconSVG_()} WhatsApp</a>`;
+function waFolioAccionHTML_(clientIndex) {
+  return `<button type="button" class="wa-btn wa-folio-btn" data-client-index="${clientIndex}" aria-label="Enviar folio por WhatsApp">${waIconSVG_()} WhatsApp</button>`;
 }
 
 // ---------- utilidades ----------
@@ -739,8 +739,9 @@ function renderTablaClientes() {
     tbody.innerHTML = `<tr class="empty-row"><td colspan="8">${mensaje}</td></tr>`;
   } else {
     tbody.innerHTML = rows
-      .map(
-        (c) => `
+      .map((c) => {
+        const clientIndex = CLIENTES.indexOf(c);
+        return `
       <tr>
         <td>${c.nombre}</td>
         <td>${c.celular}</td>
@@ -749,10 +750,10 @@ function renderTablaClientes() {
         <td>${c.tdc || "—"}</td>
         <td>${c.fechaCita || "—"}</td>
         <td><span class="badge ${statusClass(c.status)}">${c.status || "Sin enviar"}</span></td>
-        <td>${waFolioAccionHTML_(c)}</td>
+        <td>${waFolioAccionHTML_(clientIndex)}</td>
       </tr>
-    `,
-      )
+    `;
+      })
       .join("");
   }
 
@@ -773,6 +774,52 @@ function renderTablaClientes() {
 
 document.getElementById("buscar-clientes")?.addEventListener("input", () => {
   renderTablaClientes();
+});
+
+document.getElementById("tabla-clientes")?.addEventListener("click", (event) => {
+  const button = event.target.closest(".wa-folio-btn");
+  if (!button) return;
+
+  const client = CLIENTES[Number(button.dataset.clientIndex)];
+  if (!client) {
+    console.error("No se encontró el cliente para enviar su folio");
+    toast("No se encontró el cliente");
+    return;
+  }
+
+  const dialog = document.getElementById("folio-dialog");
+  const input = document.getElementById("folio-input");
+  dialog.dataset.clientIndex = button.dataset.clientIndex;
+  input.value = client.folio || "";
+  dialog.showModal();
+  input.focus();
+  input.select();
+});
+
+document.getElementById("folio-form")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const dialog = document.getElementById("folio-dialog");
+  const input = document.getElementById("folio-input");
+  const client = CLIENTES[Number(dialog.dataset.clientIndex)];
+  const folio = input.value.trim();
+  if (!client || !folio) {
+    input.setCustomValidity(folio ? "" : "Ingresa el número de folio.");
+    input.reportValidity();
+    return;
+  }
+
+  input.setCustomValidity("");
+  window.open(
+    waLink_(client.celular, waMsgFolio_(folio)),
+    "_blank",
+    "noopener,noreferrer",
+  );
+  dialog.close();
+});
+
+document.getElementById("folio-cancel")?.addEventListener("click", () => {
+  document.getElementById("folio-dialog").close();
 });
 
 document

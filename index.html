@@ -153,6 +153,32 @@
       </section>
     </main>
 
+    <dialog class="folio-dialog" id="folio-dialog" aria-labelledby="folio-dialog-title">
+      <form id="folio-form">
+        <div class="folio-dialog__header">
+          <h2 id="folio-dialog-title">Enviar folio por WhatsApp</h2>
+          <p>Confirma el número de folio que quieres compartir con el cliente.</p>
+        </div>
+        <div class="folio-dialog__field">
+          <label for="folio-input">Número de folio</label>
+          <input
+            type="text"
+            id="folio-input"
+            name="folio"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="folio-dialog__actions">
+          <button type="button" class="btn-refresh" id="folio-cancel">
+            Cancelar
+          </button>
+          <button type="submit" class="wa-btn">
+            <span aria-hidden="true">↗</span> Continuar a WhatsApp
+          </button>
+        </div>
+      </form>
+    </dialog>
     <div class="toast" id="toast"></div>
   </body>
 </html>
