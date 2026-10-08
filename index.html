@@ -26,6 +26,9 @@
         </button>
         <button class="tab-btn" data-view="clientes">Clientes</button>
       </div>
+      <button type="button" class="btn-refresh" id="btn-refrescar">
+        ↻ Actualizar
+      </button>
       <div class="status-dot">
         <span class="dot"></span><span id="lastSync">cargando…</span>
         
@@ -93,6 +96,18 @@
             Base de datos de clientes.
           </div>
           <div class="filter-bar">
+            <div class="filter-search">
+              <label class="filter-label" for="buscar-clientes">
+                Buscar por nombre o celular
+              </label>
+              <input
+                type="search"
+                id="buscar-clientes"
+                class="client-search-input"
+                placeholder="Escribe un nombre o número"
+                autocomplete="off"
+              />
+            </div>
             <div class="filter-group">
               <label class="filter-label">Año</label>
               <div id="filter-anio"></div>
@@ -101,17 +116,10 @@
               <label class="filter-label">Mes</label>
               <div id="filter-mes"></div>
             </div>
-            <div class="filter-group">
+            <div class="filter-group filter-week">
               <label class="filter-label">Semana</label>
               <div id="filter-semana"></div>
             </div>
-            <button
-              type="button"
-              class="btn-refresh"
-              id="btn-refrescar-clientes"
-            >
-              ↻ Actualizar
-            </button>
           </div>
 
           <div
@@ -120,6 +128,9 @@
             style="margin-top: 16px"
           ></div>
           <div class="table-shell" id="tabla-clientes-wrap">
+            <div class="table-scroll-hint">
+              Desliza la tabla horizontalmente para ver todas las columnas.
+            </div>
             <div class="table-scroll">
               <table class="grid">
                 <thead>
@@ -131,6 +142,7 @@
                     <th>TDC</th>
                     <th>Fecha cita</th>
                     <th>Status</th>
+                    <th>Folio</th>
                   </tr>
                 </thead>
                 <tbody id="tabla-clientes"></tbody>

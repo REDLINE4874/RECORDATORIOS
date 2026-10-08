@@ -162,6 +162,10 @@ ${EMOJI.mobile} Quedamos atentos a su amable confirmación.
 ¡Gracias por su atención! ${EMOJI.smile}`;
 }
 
+function waMsgFolio_(c) {
+  return `Buen día, le compartimos su numero de folio con el cual podrá recoger su tarjeta de crédito: ${c.folio || "—"}`;
+}
+
 // Genera el/los botones de WhatsApp según la tabla ('t1' = primer mensaje, con opción Sr./Srta.; 't2' = segundo mensaje)
 function waAccionHTML_(c, kind) {
   if (kind === "t1") {
@@ -171,6 +175,10 @@ function waAccionHTML_(c, kind) {
     </div>`;
   }
   return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" target="_blank" rel="noopener">${waIconSVG_()} WhatsApp</a>`;
+}
+
+function waFolioAccionHTML_(c) {
+  return `<a class="wa-btn" href="${waLink_(c.celular, waMsgFolio_(c))}" target="_blank" rel="noopener" aria-label="Enviar folio por WhatsApp a ${c.nombre}">${waIconSVG_()} WhatsApp</a>`;
 }
 
 // ---------- utilidades ----------
@@ -256,13 +264,16 @@ async function updateStatusCustom(custom, value) {
 // Aplica el valor elegido en un filtro de Clientes (Año/Mes/Semana) y refresca lo que dependa de él.
 function handleFilterSelect(filterName, value) {
   if (filterName === "anio") {
-    clientesFiltro.anio = Number(value);
+    clientesFiltro.anio = value === "todos" ? "todos" : Number(value);
+    clientesFiltro.mes = "todos";
+    clientesFiltro.semana = "todos";
     fillMesesFiltro();
   } else if (filterName === "mes") {
-    clientesFiltro.mes = Number(value);
+    clientesFiltro.mes = value === "todos" ? "todos" : Number(value);
+    clientesFiltro.semana = "todos";
     fillSemanasFiltro();
   } else if (filterName === "semana") {
-    clientesFiltro.semana = Number(value);
+    clientesFiltro.semana = value === "todos" ? "todos" : Number(value);
     renderTablaClientes();
   }
 }
@@ -365,8 +376,15 @@ document.addEventListener("click", (event) => {
         const dropdownHeight = Math.min(options.scrollHeight || 220, 220);
         const openBelow = rect.bottom + 12 + dropdownHeight < viewportHeight;
 
-        options.style.width = `${rect.width}px`;
-        options.style.left = `${rect.left}px`;
+        const maxWidth = Math.max(0, window.innerWidth - 16);
+        options.style.minWidth = `${Math.min(rect.width, maxWidth)}px`;
+        options.style.maxWidth = `${maxWidth}px`;
+        const dropdownWidth = options.getBoundingClientRect().width;
+        const left = Math.min(
+          Math.max(8, rect.left),
+          window.innerWidth - dropdownWidth - 8,
+        );
+        options.style.left = `${left}px`;
         if (openBelow) {
           options.style.top = `${rect.bottom + 8}px`;
           options.style.bottom = "auto";
@@ -401,6 +419,10 @@ async function loadData() {
     document.getElementById("configBanner").style.display = "block";
     return;
   }
+  const refreshButtons = document.querySelectorAll("#btn-refrescar");
+  refreshButtons.forEach((button) => {
+    button.disabled = true;
+  });
   try {
     const url = `${APPS_SCRIPT_URL}?action=getData`;
     console.log("loadData: fetching", url);
@@ -486,6 +508,10 @@ async function loadData() {
       renderRecordatorios();
       initClientesFiltros();
     }
+  } finally {
+    refreshButtons.forEach((button) => {
+      button.disabled = false;
+    });
   }
 }
 
@@ -576,25 +602,27 @@ function weekRangeLabelByIndex(year, month, weekIdx) {
   return `Semana ${weekIdx} (${fmt(monday)} – ${fmt(sunday)})`;
 }
 
-// Fecha actual del dispositivo (para autocompletar los filtros)
-function fechaActual() {
-  const d = new Date();
-  return { y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate() };
+let clientesFiltro = { anio: "todos", mes: "todos", semana: "todos" };
+
+function normalizarTexto(texto) {
+  return texto
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 }
 
-let clientesFiltro = { anio: null, mes: null, semana: null };
-
-// Construye el filtro de AÑO. Se autoselecciona el año actual.
+// Construye los filtros de periodo. Por defecto se muestran todos los clientes.
 function initClientesFiltros() {
-  const hoy = fechaActual();
   const conFecha = CLIENTES.filter((c) => c.fecha);
   let anios = [...new Set(conFecha.map((c) => parseYMD(c.fecha).y))];
-  if (!anios.includes(hoy.y)) anios.push(hoy.y);
   anios.sort((a, b) => b - a);
 
-  clientesFiltro.anio = hoy.y;
-
-  const opcionesAnio = anios.map((a) => ({ value: a, label: String(a) }));
+  clientesFiltro = { anio: "todos", mes: "todos", semana: "todos" };
+  const opcionesAnio = [
+    { value: "todos", label: "Todos" },
+    ...anios.map((a) => ({ value: a, label: String(a) })),
+  ];
   document.getElementById("filter-anio").innerHTML = filterSelectHTML(
     "anio",
     clientesFiltro.anio,
@@ -604,22 +632,22 @@ function initClientesFiltros() {
   fillMesesFiltro();
 }
 
-// Construye el filtro de MES para el año seleccionado. Autoselecciona el mes actual si el año coincide.
+// Construye el filtro de MES según el año seleccionado.
 function fillMesesFiltro() {
-  const hoy = fechaActual();
-  const rowsAnio = CLIENTES.filter(
-    (c) => c.fecha && parseYMD(c.fecha).y === clientesFiltro.anio,
-  );
+  const rowsAnio = CLIENTES.filter((c) => {
+    if (!c.fecha) return false;
+    return (
+      clientesFiltro.anio === "todos" ||
+      parseYMD(c.fecha).y === clientesFiltro.anio
+    );
+  });
   let meses = [...new Set(rowsAnio.map((c) => parseYMD(c.fecha).m))];
-  if (clientesFiltro.anio === hoy.y && !meses.includes(hoy.m))
-    meses.push(hoy.m);
-  if (meses.length === 0) meses = [hoy.m];
   meses.sort((a, b) => a - b);
 
-  clientesFiltro.mes =
-    clientesFiltro.anio === hoy.y ? hoy.m : meses[meses.length - 1];
-
-  const opcionesMes = meses.map((m) => ({ value: m, label: MESES[m - 1] }));
+  const opcionesMes = [
+    { value: "todos", label: "Todos" },
+    ...meses.map((m) => ({ value: m, label: MESES[m - 1] })),
+  ];
   document.getElementById("filter-mes").innerHTML = filterSelectHTML(
     "mes",
     clientesFiltro.mes,
@@ -629,34 +657,34 @@ function fillMesesFiltro() {
   fillSemanasFiltro();
 }
 
-// Construye el filtro de SEMANA para año/mes seleccionados. Autoselecciona la semana actual si aplica.
+// Construye el filtro de SEMANA según el año y el mes seleccionados.
 function fillSemanasFiltro() {
-  const hoy = fechaActual();
-  const rowsMes = CLIENTES.filter(
-    (c) =>
-      c.fecha &&
-      parseYMD(c.fecha).y === clientesFiltro.anio &&
-      parseYMD(c.fecha).m === clientesFiltro.mes,
-  );
+  const rowsMes = CLIENTES.filter((c) => {
+    if (!c.fecha) return false;
+    const fecha = parseYMD(c.fecha);
+    return (
+      (clientesFiltro.anio === "todos" ||
+        fecha.y === clientesFiltro.anio) &&
+      (clientesFiltro.mes === "todos" || fecha.m === clientesFiltro.mes)
+    );
+  });
   let semanas = [...new Set(rowsMes.map((c) => weekIndexInMonth(c.fecha)))];
-
-  const esMesActual =
-    clientesFiltro.anio === hoy.y && clientesFiltro.mes === hoy.m;
-  let hoyWeek = null;
-  if (esMesActual) {
-    const hoyStr = `${hoy.y}-${String(hoy.m).padStart(2, "0")}-${String(hoy.d).padStart(2, "0")}`;
-    hoyWeek = weekIndexInMonth(hoyStr);
-    if (!semanas.includes(hoyWeek)) semanas.push(hoyWeek);
-  }
-  if (semanas.length === 0) semanas = [1];
   semanas.sort((a, b) => a - b);
 
-  clientesFiltro.semana = esMesActual ? hoyWeek : semanas[semanas.length - 1];
-
-  const opcionesSemana = semanas.map((s) => ({
-    value: s,
-    label: weekRangeLabelByIndex(clientesFiltro.anio, clientesFiltro.mes, s),
-  }));
+  const opcionesSemana = [
+    { value: "todos", label: "Todas" },
+    ...semanas.map((s) => ({
+      value: s,
+      label:
+        clientesFiltro.anio !== "todos" && clientesFiltro.mes !== "todos"
+          ? weekRangeLabelByIndex(
+              clientesFiltro.anio,
+              clientesFiltro.mes,
+              s,
+            )
+          : `Semana ${s}`,
+    })),
+  ];
   document.getElementById("filter-semana").innerHTML = filterSelectHTML(
     "semana",
     clientesFiltro.semana,
@@ -667,17 +695,48 @@ function fillSemanasFiltro() {
 }
 
 function renderTablaClientes() {
+  const busqueda = normalizarTexto(
+    document.getElementById("buscar-clientes")?.value.trim() || "",
+  );
+  const busquedaNumerica = busqueda.replace(/\D/g, "");
   const rows = CLIENTES.filter(
-    (c) =>
-      c.fecha &&
-      parseYMD(c.fecha).y === clientesFiltro.anio &&
-      parseYMD(c.fecha).m === clientesFiltro.mes &&
-      weekIndexInMonth(c.fecha) === clientesFiltro.semana,
+    (c) => {
+      const periodoCompleto =
+        clientesFiltro.anio === "todos" &&
+        clientesFiltro.mes === "todos" &&
+        clientesFiltro.semana === "todos";
+      const coincidePeriodo = c.fecha
+        ? (() => {
+            const fecha = parseYMD(c.fecha);
+            return (
+              (clientesFiltro.anio === "todos" ||
+                fecha.y === clientesFiltro.anio) &&
+              (clientesFiltro.mes === "todos" ||
+                fecha.m === clientesFiltro.mes) &&
+              (clientesFiltro.semana === "todos" ||
+                weekIndexInMonth(c.fecha) === clientesFiltro.semana)
+            );
+          })()
+        : periodoCompleto;
+      return (
+        coincidePeriodo &&
+        (!busqueda ||
+        normalizarTexto(c.nombre || "").includes(busqueda) ||
+        (busquedaNumerica &&
+          (c.celular || "")
+            .toString()
+            .replace(/\D/g, "")
+            .includes(busquedaNumerica)))
+      );
+    },
   );
 
   const tbody = document.getElementById("tabla-clientes");
   if (rows.length === 0) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Sin clientes en este periodo</td></tr>`;
+    const mensaje = busqueda
+      ? "Sin clientes que coincidan con la búsqueda"
+      : "Sin clientes en este periodo";
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">${mensaje}</td></tr>`;
   } else {
     tbody.innerHTML = rows
       .map(
@@ -690,6 +749,7 @@ function renderTablaClientes() {
         <td>${c.tdc || "—"}</td>
         <td>${c.fechaCita || "—"}</td>
         <td><span class="badge ${statusClass(c.status)}">${c.status || "Sin enviar"}</span></td>
+        <td>${waFolioAccionHTML_(c)}</td>
       </tr>
     `,
       )
@@ -697,12 +757,26 @@ function renderTablaClientes() {
   }
 
   const countLabel = document.getElementById("clientes-count-label");
-  if (countLabel)
-    countLabel.textContent = `${rows.length} cliente${rows.length === 1 ? "" : "s"} en el periodo seleccionado.`;
+  if (countLabel) {
+    const cantidad = rows.length === 1 ? "cliente" : "clientes";
+    const encontrados = rows.length === 1 ? "encontrado" : "encontrados";
+    const todosLosPeriodos =
+      clientesFiltro.anio === "todos" &&
+      clientesFiltro.mes === "todos" &&
+      clientesFiltro.semana === "todos";
+    const periodo = todosLosPeriodos
+      ? "en la base de clientes."
+      : "en el periodo seleccionado.";
+    countLabel.textContent = `${rows.length} ${cantidad}${busqueda ? ` ${encontrados}` : ""} ${periodo}`;
+  }
 }
 
+document.getElementById("buscar-clientes")?.addEventListener("input", () => {
+  renderTablaClientes();
+});
+
 document
-  .getElementById("btn-refrescar-clientes")
+  .getElementById("btn-refrescar")
   ?.addEventListener("click", () => {
     loadData();
   });
@@ -727,7 +801,6 @@ function startApp() {
   try {
     console.log("startApp: calling loadData");
     loadData();
-    window._loadInterval = setInterval(loadData, 300000);
   } catch (e) {
     console.error("startApp error", e);
     toast("Error iniciando la app");
