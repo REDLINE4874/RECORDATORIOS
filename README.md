@@ -11,7 +11,11 @@ frontend/
   css/
     styles.css            Estilos
   js/
-    script.js             Lógica de la aplicación
+    app-config.js         Configuración y estado compartido
+    whatsapp.js           Enlaces, mensajes y seguimiento de WhatsApp
+    ui-controls.js        Utilidades, estados y controles de la interfaz
+    reminders.js          Carga de datos y tablas de recordatorios
+    clients.js            Filtros, tabla de clientes e inicialización
     components/
       theme-toggle.js     Control del tema visual
 ```
