@@ -113,7 +113,7 @@ function waMsgFolio_(folio) {
 function waMsgRecordatorio_(c) {
   return `👋 ¡Hola, estimado cliente!
 
-💳 Le recordamos que tiene pendiente recoger su Tarjeta de Crédito (${productoNombre_(c)}) Banamex.
+💳 Le recordamos que tiene pendiente recoger su Tarjeta de Crédito ${productoNombre_(c)} Banamex.
 
 📍 Puede acudir a la sucursal de su preferencia dentro del horario de atención.
 
