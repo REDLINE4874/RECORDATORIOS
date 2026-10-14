@@ -166,10 +166,10 @@ function waMsgFolio_(folio) {
   return `Buen día, le compartimos su numero de folio con el cual podrá recoger su tarjeta de crédito: ${folio}`;
 }
 
-function waMsgRecordatorio_() {
+function waMsgRecordatorio_(c) {
   return `👋 ¡Hola, estimado cliente!
 
-💳 Le recordamos que tiene pendiente recoger su Tarjeta de Crédito (la tarjeta de cliente) Banamex.
+💳 Le recordamos que tiene pendiente recoger su Tarjeta de Crédito ${productoNombre_(c)} Banamex.
 
 📍 Puede acudir a la sucursal de su preferencia dentro del horario de atención.
 
@@ -195,7 +195,7 @@ function waFolioAccionHTML_(clientIndex) {
 
 function waRecordatorioAccionHTML_(c) {
   const clientIndex = CLIENTES.indexOf(c);
-  return `<a class="wa-btn wa-track-open" data-tracking-kind="recordatorio" data-client-index="${clientIndex}" href="${waLink_(c.celular, waMsgRecordatorio_())}" target="_blank" rel="noopener" aria-label="Enviar recordatorio de tarjeta por WhatsApp">${waIconSVG_()}</a>`;
+  return `<a class="wa-btn wa-track-open" data-tracking-kind="recordatorio" data-client-index="${clientIndex}" href="${waLink_(c.celular, waMsgRecordatorio_(c))}" target="_blank" rel="noopener" aria-label="Enviar recordatorio de tarjeta por WhatsApp">${waIconSVG_()}</a>`;
 }
 
 function trackingDateLabel_(value) {
