@@ -612,13 +612,24 @@ function normalizarTexto(texto) {
     .toLowerCase();
 }
 
-// Construye los filtros de periodo. Por defecto se muestran todos los clientes.
+// Construye los filtros de periodo. Por defecto se muestra la semana actual.
 function initClientesFiltros() {
   const conFecha = CLIENTES.filter((c) => c.fecha);
   let anios = [...new Set(conFecha.map((c) => parseYMD(c.fecha).y))];
+  const hoy = new Date();
+  const anioActual = hoy.getFullYear();
+  const mesActual = hoy.getMonth() + 1;
+  const fechaActual = `${anioActual}-${String(mesActual).padStart(2, "0")}-${String(
+    hoy.getDate(),
+  ).padStart(2, "0")}`;
+  anios = [...new Set([...anios, anioActual])];
   anios.sort((a, b) => b - a);
 
-  clientesFiltro = { anio: "todos", mes: "todos", semana: "todos" };
+  clientesFiltro = {
+    anio: anioActual,
+    mes: mesActual,
+    semana: weekIndexInMonth(fechaActual),
+  };
   const opcionesAnio = [
     { value: "todos", label: "Todos" },
     ...anios.map((a) => ({ value: a, label: String(a) })),
@@ -641,7 +652,12 @@ function fillMesesFiltro() {
       parseYMD(c.fecha).y === clientesFiltro.anio
     );
   });
-  let meses = [...new Set(rowsAnio.map((c) => parseYMD(c.fecha).m))];
+  let meses = [
+    ...new Set([
+      ...rowsAnio.map((c) => parseYMD(c.fecha).m),
+      ...(clientesFiltro.mes === "todos" ? [] : [clientesFiltro.mes]),
+    ]),
+  ];
   meses.sort((a, b) => a - b);
 
   const opcionesMes = [
@@ -668,7 +684,12 @@ function fillSemanasFiltro() {
       (clientesFiltro.mes === "todos" || fecha.m === clientesFiltro.mes)
     );
   });
-  let semanas = [...new Set(rowsMes.map((c) => weekIndexInMonth(c.fecha)))];
+  let semanas = [
+    ...new Set([
+      ...rowsMes.map((c) => weekIndexInMonth(c.fecha)),
+      ...(clientesFiltro.semana === "todos" ? [] : [clientesFiltro.semana]),
+    ]),
+  ];
   semanas.sort((a, b) => a - b);
 
   const opcionesSemana = [
