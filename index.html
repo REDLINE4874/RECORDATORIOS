@@ -4,18 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formalización</title>
-    <link rel="icon" href="assets/icon/favicon-dark.svg" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="assets/icon/favicon-light.svg" media="(prefers-color-scheme: light)" />
-  
-      <!-- Importamos Quicksand y Nunito desde Google Fonts -->
-  <link rel="preconnect" href="https://googleapis.com">
-  <link rel="preconnect" href="https://gstatic.com" crossorigin>
-  <link href="https://googleapis.com/css2?family=Nunito:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="icon"
+      href="assets/icon/favicon-dark.svg"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link
+      rel="icon"
+      href="assets/icon/favicon-light.svg"
+      media="(prefers-color-scheme: light)"
+    />
+
+    <!-- Importamos Quicksand y Nunito desde Google Fonts -->
+    <link rel="preconnect" href="https://googleapis.com" />
+    <link rel="preconnect" href="https://gstatic.com" crossorigin />
+    <link
+      href="https://googleapis.com/css2?family=Nunito:wght@400;600&family=Quicksand:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
     <script src="script.js" charset="utf-8" defer></script>
     <script src="src/components/theme-toggle.js" defer></script>
-
   </head>
   <body>
     <div class="navbar">
@@ -31,7 +41,6 @@
       </button>
       <div class="status-dot">
         <span class="dot"></span><span id="lastSync">cargando…</span>
-        
       </div>
       <theme-toggle size="30"></theme-toggle>
     </div>
@@ -153,11 +162,17 @@
       </section>
     </main>
 
-    <dialog class="folio-dialog" id="folio-dialog" aria-labelledby="folio-dialog-title">
+    <dialog
+      class="folio-dialog"
+      id="folio-dialog"
+      aria-labelledby="folio-dialog-title"
+    >
       <form id="folio-form">
         <div class="folio-dialog__header">
           <h2 id="folio-dialog-title">Enviar folio por WhatsApp</h2>
-          <p>Confirma el número de folio que quieres compartir con el cliente.</p>
+          <p>
+            Confirma el número de folio que quieres compartir con el cliente.
+          </p>
         </div>
         <div class="folio-dialog__field">
           <label for="folio-input">Número de folio</label>

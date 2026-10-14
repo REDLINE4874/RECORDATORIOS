@@ -17,7 +17,7 @@
  *     - lg  (grande,   64x34px)
  *   Ejemplo:  <theme-toggle size="sm"></theme-toggle>
  * ***************************************************************************************
- *      si se requiere otro valor solo coloca un numero en la equita del html, ejemplo: 
+ *      si se requiere otro valor solo coloca un numero en la equita del html, ejemplo:
  *      <theme-toggle size="40"></theme-toggle> y el tamaño se ajustará a 40px de ancho.
  *******************************************************************************************
  * El componente:
@@ -33,12 +33,12 @@
 
 class ThemeToggle extends HTMLElement {
   static get observedAttributes() {
-    return ['size'];
+    return ["size"];
   }
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
   }
 
   connectedCallback() {
@@ -167,39 +167,43 @@ class ThemeToggle extends HTMLElement {
       </button>
     `;
 
-    this.$btn = this.shadowRoot.querySelector('.switch');
-    this.$btn.addEventListener('click', () => this.toggle());
+    this.$btn = this.shadowRoot.querySelector(".switch");
+    this.$btn.addEventListener("click", () => this.toggle());
 
     // Estado inicial: localStorage > preferencia del sistema
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialDark = saved ? saved === 'dark' : prefersDark;
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const initialDark = saved ? saved === "dark" : prefersDark;
 
     this._setTheme(initialDark, { persist: false });
   }
 
   toggle() {
-    const isDark = this.$btn.classList.contains('dark');
+    const isDark = this.$btn.classList.contains("dark");
     this._setTheme(!isDark, { persist: true });
   }
 
   _setTheme(isDark, { persist }) {
-    this.$btn.classList.toggle('dark', isDark);
-    this.$btn.setAttribute('aria-checked', String(isDark));
+    this.$btn.classList.toggle("dark", isDark);
+    this.$btn.setAttribute("aria-checked", String(isDark));
 
     // Activa el modo oscuro con la MISMA convención que ya usa tu CSS:
     // body.dark-mode { ... }
-    document.body.classList.toggle('dark-mode', isDark);
+    document.body.classList.toggle("dark-mode", isDark);
 
     if (persist) {
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      localStorage.setItem("theme", isDark ? "dark" : "light");
     }
 
-    this.dispatchEvent(new CustomEvent('theme-change', {
-      detail: { theme: isDark ? 'dark' : 'light' },
-      bubbles: true
-    }));
+    this.dispatchEvent(
+      new CustomEvent("theme-change", {
+        detail: { theme: isDark ? "dark" : "light" },
+        bubbles: true,
+      }),
+    );
   }
 }
 
-customElements.define('theme-toggle', ThemeToggle);
+customElements.define("theme-toggle", ThemeToggle);

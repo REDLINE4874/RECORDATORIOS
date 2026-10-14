@@ -283,7 +283,9 @@ document.addEventListener("click", (event) => {
   const option = event.target.closest(".custom-select__option");
   if (option) {
     const optionsList = option.closest(".custom-select__options");
-    const ownerId = optionsList ? optionsList.getAttribute("data-owner-id") : null;
+    const ownerId = optionsList
+      ? optionsList.getAttribute("data-owner-id")
+      : null;
     const custom = ownerId
       ? document.querySelector(`.custom-select[data-cs-id="${ownerId}"]`)
       : option.closest(".custom-select");
@@ -325,7 +327,10 @@ document.addEventListener("click", (event) => {
 
     // Asegurar un ID estable con setAttribute (más seguro que dataset para búsquedas DOM)
     if (!custom.getAttribute("data-cs-id")) {
-      custom.setAttribute("data-cs-id", "cs-" + Math.random().toString(36).slice(2, 9));
+      custom.setAttribute(
+        "data-cs-id",
+        "cs-" + Math.random().toString(36).slice(2, 9),
+      );
     }
     const ownerId = custom.getAttribute("data-cs-id");
 
@@ -337,7 +342,11 @@ document.addEventListener("click", (event) => {
       if (el !== custom) {
         el.classList.remove("open");
         const elId = el.getAttribute("data-cs-id");
-        const opt = el.querySelector(".custom-select__options") || document.querySelector(`.custom-select__options[data-owner-id="${elId}"]`);
+        const opt =
+          el.querySelector(".custom-select__options") ||
+          document.querySelector(
+            `.custom-select__options[data-owner-id="${elId}"]`,
+          );
         if (opt && opt.getAttribute("data-moved") === "1") {
           el.appendChild(opt);
           opt.classList.remove("floating-open");
@@ -352,7 +361,9 @@ document.addEventListener("click", (event) => {
       custom.classList.remove("open");
       trigger.setAttribute("aria-expanded", "false");
 
-      const options = document.querySelector(`.custom-select__options[data-owner-id="${ownerId}"]`);
+      const options = document.querySelector(
+        `.custom-select__options[data-owner-id="${ownerId}"]`,
+      );
       if (options && options.getAttribute("data-moved") === "1") {
         custom.appendChild(options);
         options.classList.remove("floating-open");
@@ -404,7 +415,9 @@ document.addEventListener("click", (event) => {
   document.querySelectorAll(".custom-select__options").forEach((opt) => {
     if (opt.getAttribute("data-moved") === "1") {
       const elId = opt.getAttribute("data-owner-id");
-      const owner = document.querySelector(`.custom-select[data-cs-id="${elId}"]`);
+      const owner = document.querySelector(
+        `.custom-select[data-cs-id="${elId}"]`,
+      );
       if (owner) owner.appendChild(opt);
       opt.classList.remove("floating-open");
       opt.removeAttribute("data-moved");
@@ -679,8 +692,7 @@ function fillSemanasFiltro() {
     if (!c.fecha) return false;
     const fecha = parseYMD(c.fecha);
     return (
-      (clientesFiltro.anio === "todos" ||
-        fecha.y === clientesFiltro.anio) &&
+      (clientesFiltro.anio === "todos" || fecha.y === clientesFiltro.anio) &&
       (clientesFiltro.mes === "todos" || fecha.m === clientesFiltro.mes)
     );
   });
@@ -698,11 +710,7 @@ function fillSemanasFiltro() {
       value: s,
       label:
         clientesFiltro.anio !== "todos" && clientesFiltro.mes !== "todos"
-          ? weekRangeLabelByIndex(
-              clientesFiltro.anio,
-              clientesFiltro.mes,
-              s,
-            )
+          ? weekRangeLabelByIndex(clientesFiltro.anio, clientesFiltro.mes, s)
           : `Semana ${s}`,
     })),
   ];
@@ -720,37 +728,35 @@ function renderTablaClientes() {
     document.getElementById("buscar-clientes")?.value.trim() || "",
   );
   const busquedaNumerica = busqueda.replace(/\D/g, "");
-  const rows = CLIENTES.filter(
-    (c) => {
-      const periodoCompleto =
-        clientesFiltro.anio === "todos" &&
-        clientesFiltro.mes === "todos" &&
-        clientesFiltro.semana === "todos";
-      const coincidePeriodo = c.fecha
-        ? (() => {
-            const fecha = parseYMD(c.fecha);
-            return (
-              (clientesFiltro.anio === "todos" ||
-                fecha.y === clientesFiltro.anio) &&
-              (clientesFiltro.mes === "todos" ||
-                fecha.m === clientesFiltro.mes) &&
-              (clientesFiltro.semana === "todos" ||
-                weekIndexInMonth(c.fecha) === clientesFiltro.semana)
-            );
-          })()
-        : periodoCompleto;
-      return (
-        coincidePeriodo &&
-        (!busqueda ||
+  const rows = CLIENTES.filter((c) => {
+    const periodoCompleto =
+      clientesFiltro.anio === "todos" &&
+      clientesFiltro.mes === "todos" &&
+      clientesFiltro.semana === "todos";
+    const coincidePeriodo = c.fecha
+      ? (() => {
+          const fecha = parseYMD(c.fecha);
+          return (
+            (clientesFiltro.anio === "todos" ||
+              fecha.y === clientesFiltro.anio) &&
+            (clientesFiltro.mes === "todos" ||
+              fecha.m === clientesFiltro.mes) &&
+            (clientesFiltro.semana === "todos" ||
+              weekIndexInMonth(c.fecha) === clientesFiltro.semana)
+          );
+        })()
+      : periodoCompleto;
+    return (
+      coincidePeriodo &&
+      (!busqueda ||
         normalizarTexto(c.nombre || "").includes(busqueda) ||
         (busquedaNumerica &&
           (c.celular || "")
             .toString()
             .replace(/\D/g, "")
             .includes(busquedaNumerica)))
-      );
-    },
-  );
+    );
+  });
 
   const tbody = document.getElementById("tabla-clientes");
   if (rows.length === 0) {
@@ -797,25 +803,27 @@ document.getElementById("buscar-clientes")?.addEventListener("input", () => {
   renderTablaClientes();
 });
 
-document.getElementById("tabla-clientes")?.addEventListener("click", (event) => {
-  const button = event.target.closest(".wa-folio-btn");
-  if (!button) return;
+document
+  .getElementById("tabla-clientes")
+  ?.addEventListener("click", (event) => {
+    const button = event.target.closest(".wa-folio-btn");
+    if (!button) return;
 
-  const client = CLIENTES[Number(button.dataset.clientIndex)];
-  if (!client) {
-    console.error("No se encontró el cliente para enviar su folio");
-    toast("No se encontró el cliente");
-    return;
-  }
+    const client = CLIENTES[Number(button.dataset.clientIndex)];
+    if (!client) {
+      console.error("No se encontró el cliente para enviar su folio");
+      toast("No se encontró el cliente");
+      return;
+    }
 
-  const dialog = document.getElementById("folio-dialog");
-  const input = document.getElementById("folio-input");
-  dialog.dataset.clientIndex = button.dataset.clientIndex;
-  input.value = client.folio || "";
-  dialog.showModal();
-  input.focus();
-  input.select();
-});
+    const dialog = document.getElementById("folio-dialog");
+    const input = document.getElementById("folio-input");
+    dialog.dataset.clientIndex = button.dataset.clientIndex;
+    input.value = client.folio || "";
+    dialog.showModal();
+    input.focus();
+    input.select();
+  });
 
 document.getElementById("folio-form")?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -843,11 +851,9 @@ document.getElementById("folio-cancel")?.addEventListener("click", () => {
   document.getElementById("folio-dialog").close();
 });
 
-document
-  .getElementById("btn-refrescar")
-  ?.addEventListener("click", () => {
-    loadData();
-  });
+document.getElementById("btn-refrescar")?.addEventListener("click", () => {
+  loadData();
+});
 
 // ---------- tabs ----------
 document.querySelectorAll(".tab-btn").forEach((btn) => {
