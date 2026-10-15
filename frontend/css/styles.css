@@ -415,6 +415,16 @@ body.dark-mode .table-shell {
   padding: 13px 12px;
 }
 
+#tabla-clientes-wrap .search-match {
+  padding: 0 2px;
+  border-radius: 3px;
+  background: #fff0a8;
+  color: #3a2c00;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
 #tabla-clientes-wrap table.grid th:nth-child(1),
 #tabla-clientes-wrap table.grid td:nth-child(1) {
   width: 205px;

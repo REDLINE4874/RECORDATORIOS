@@ -54,6 +54,46 @@ function normalizarTexto(texto) {
     .toLowerCase();
 }
 
+function resaltarCoincidencia(valor, busqueda, soloNumeros = false) {
+  const texto = (valor || "").toString();
+  const consulta = soloNumeros ? busqueda.replace(/\D/g, "") : busqueda;
+  const posiciones = [];
+  let textoNormalizado = "";
+  let offset = 0;
+
+  for (const caracter of texto) {
+    const normalizado = soloNumeros
+      ? caracter.replace(/\D/g, "")
+      : normalizarTexto(caracter);
+    for (let i = 0; i < normalizado.length; i += 1) {
+      textoNormalizado += normalizado[i];
+      posiciones.push({ inicio: offset, fin: offset + caracter.length });
+    }
+    offset += caracter.length;
+  }
+
+  const indice = textoNormalizado.indexOf(consulta);
+  const escaparHTML = (contenido) =>
+    contenido.replace(/[&<>"']/g, (caracter) => {
+      const entidades = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+      return entidades[caracter];
+    });
+
+  if (indice < 0 || !consulta) return escaparHTML(texto);
+
+  const inicio = posiciones[indice].inicio;
+  const fin = posiciones[indice + consulta.length - 1].fin;
+  return `${escaparHTML(texto.slice(0, inicio))}<mark class="search-match">${escaparHTML(
+    texto.slice(inicio, fin),
+  )}</mark>${escaparHTML(texto.slice(fin))}`;
+}
+
 // Construye los filtros de periodo. Por defecto se muestra la semana actual.
 function initClientesFiltros() {
   const conFecha = CLIENTES.filter((c) => c.fecha);
@@ -175,16 +215,15 @@ function renderTablaClientes() {
           );
         })()
       : periodoCompleto;
-    return (
-      coincidePeriodo &&
-      (!busqueda ||
-        normalizarTexto(c.nombre || "").includes(busqueda) ||
-        (busquedaNumerica &&
-          (c.celular || "")
-            .toString()
-            .replace(/\D/g, "")
-            .includes(busquedaNumerica)))
-    );
+    const coincideBusqueda =
+      normalizarTexto(c.nombre || "").includes(busqueda) ||
+      normalizarTexto(c.folio || "").includes(busqueda) ||
+      (busquedaNumerica &&
+        (c.celular || "")
+          .toString()
+          .replace(/\D/g, "")
+          .includes(busquedaNumerica));
+    return busqueda ? coincideBusqueda : coincidePeriodo;
   });
 
   const tbody = document.getElementById("tabla-clientes");
@@ -199,9 +238,9 @@ function renderTablaClientes() {
         const clientIndex = CLIENTES.indexOf(c);
         return `
       <tr>
-        <td>${c.nombre}</td>
-        <td>${c.celular}</td>
-        <td>${c.folio || "—"}</td>
+        <td>${resaltarCoincidencia(c.nombre, busqueda)}</td>
+        <td>${resaltarCoincidencia(c.celular, busquedaNumerica, true)}</td>
+        <td>${resaltarCoincidencia(c.folio || "—", busqueda)}</td>
         <td>${c.fecha || "—"}</td>
         <td>${c.tdc || "—"}</td>
         <td>${c.fechaCita || "—"}</td>
@@ -224,7 +263,7 @@ function renderTablaClientes() {
       clientesFiltro.anio === "todos" &&
       clientesFiltro.mes === "todos" &&
       clientesFiltro.semana === "todos";
-    const periodo = todosLosPeriodos
+    const periodo = busqueda || todosLosPeriodos
       ? "en la base de clientes."
       : "en el periodo seleccionado.";
     countLabel.textContent = `${rows.length} ${cantidad}${busqueda ? ` ${encontrados}` : ""} ${periodo}`;
