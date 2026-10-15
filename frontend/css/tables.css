@@ -45,7 +45,7 @@ body.dark-mode .table-shell {
 
 #tabla-clientes-wrap table.grid {
   min-width: 1560px;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 #tabla-clientes-wrap table.grid th,
@@ -63,59 +63,16 @@ body.dark-mode .table-shell {
   text-underline-offset: 2px;
 }
 
-#tabla-clientes-wrap table.grid th:nth-child(1),
-#tabla-clientes-wrap table.grid td:nth-child(1) {
-  width: 205px;
+#tabla-clientes-wrap table.grid th:first-child,
+#tabla-clientes-wrap table.grid td:first-child {
+  width: 35%;
+  min-width: 260px;
 }
 
-#tabla-clientes-wrap table.grid th:nth-child(2),
-#tabla-clientes-wrap table.grid td:nth-child(2) {
-  width: 130px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(3),
-#tabla-clientes-wrap table.grid td:nth-child(3) {
-  width: 125px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(4),
-#tabla-clientes-wrap table.grid td:nth-child(4) {
-  width: 110px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(5),
-#tabla-clientes-wrap table.grid td:nth-child(5) {
-  width: 135px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(6),
-#tabla-clientes-wrap table.grid td:nth-child(6) {
-  width: 125px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(7),
-#tabla-clientes-wrap table.grid td:nth-child(7) {
-  width: 145px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(8),
-#tabla-clientes-wrap table.grid td:nth-child(8) {
-  width: 90px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(9),
-#tabla-clientes-wrap table.grid td:nth-child(9) {
-  width: 105px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(10),
-#tabla-clientes-wrap table.grid td:nth-child(10) {
-  width: 190px;
-}
-
-#tabla-clientes-wrap table.grid th:nth-child(11),
-#tabla-clientes-wrap table.grid td:nth-child(11) {
-  width: 200px;
+#tabla-clientes-wrap table.grid th:not(:first-child),
+#tabla-clientes-wrap table.grid td:not(:first-child) {
+  width: 1%;
+  white-space: nowrap;
 }
 
 .table-scroll::-webkit-scrollbar {
@@ -209,4 +166,3 @@ body.dark-mode table.grid tbody tr:hover td {
   padding: 26px;
   background: var(--surface) !important;
 }
-
