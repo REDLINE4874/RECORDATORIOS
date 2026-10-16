@@ -118,6 +118,7 @@ document.addEventListener("click", (event) => {
     const trigger = custom.querySelector(".custom-select__trigger");
     if (trigger) {
       trigger.innerHTML = `${option.textContent} <span class="custom-select__arrow">▾</span>`;
+      trigger.setAttribute("aria-expanded", "false");
     }
 
     // Restaurar opciones si estaban flotando
@@ -129,7 +130,13 @@ document.addEventListener("click", (event) => {
       optionsList.removeAttribute("data-owner-id");
     }
 
-    if (custom.dataset.kind === "filter") {
+    if (custom.dataset.kind === "action") {
+      if (trigger) {
+        trigger.innerHTML = `Seleccionar acción... <span class="custom-select__arrow">▾</span>`;
+      }
+      option.classList.remove("selected");
+      handleClientActionSelect(custom.dataset.clientIndex, option.dataset.value);
+    } else if (custom.dataset.kind === "filter") {
       handleFilterSelect(custom.dataset.filter, option.dataset.value);
     } else {
       updateStatusCustom(custom, option.dataset.value);
@@ -242,4 +249,3 @@ document.addEventListener("click", (event) => {
     }
   });
 });
-

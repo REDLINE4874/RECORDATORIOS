@@ -133,13 +133,22 @@ function waAccionHTML_(c, kind) {
   return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" target="_blank" rel="noopener" aria-label="Enviar segundo recordatorio por WhatsApp">${waIconSVG_()}</a>`;
 }
 
-function waFolioAccionHTML_(clientIndex) {
-  return `<button type="button" class="wa-btn wa-folio-btn" data-client-index="${clientIndex}" aria-label="Enviar folio por WhatsApp">${waIconSVG_()}</button>`;
-}
-
-function waRecordatorioAccionHTML_(c) {
-  const clientIndex = CLIENTES.indexOf(c);
-  return `<a class="wa-btn wa-track-open" data-tracking-kind="recordatorio" data-client-index="${clientIndex}" href="${waLink_(c.celular, waMsgRecordatorio_(c))}" target="_blank" rel="noopener" aria-label="Enviar recordatorio de tarjeta por WhatsApp">${waIconSVG_()}</a>`;
+function waAccionesSelectHTML_(clientIndex, clientName) {
+  const actions = [
+    { value: "folio", label: "Enviar folio" },
+    { value: "recordatorio", label: "Enviar recordatorio" },
+    { value: "cita-programada", label: "Cita programada" },
+  ];
+  const items = actions
+    .map(
+      (action) =>
+        `<li class="custom-select__option" data-value="${action.value}" role="option">${action.label}</li>`,
+    )
+    .join("");
+  return `<div class="custom-select client-actions-select" data-kind="action" data-client-index="${clientIndex}">
+    <button type="button" class="custom-select__trigger" aria-label="Acciones para ${escapeHTML_(clientName || "cliente")}" aria-haspopup="listbox" aria-expanded="false">Seleccionar acción... <span class="custom-select__arrow">▾</span></button>
+    <ul class="custom-select__options" role="listbox">${items}</ul>
+  </div>`;
 }
 
 function trackingDateLabel_(value) {
@@ -230,4 +239,3 @@ async function updateTracking(client, kind, status) {
     toast("Error al guardar el seguimiento");
   }
 }
-

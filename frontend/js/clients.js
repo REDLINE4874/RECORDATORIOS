@@ -231,7 +231,7 @@ function renderTablaClientes() {
     const mensaje = busqueda
       ? "Sin clientes que coincidan con la búsqueda"
       : "Sin clientes en este periodo";
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">${mensaje}</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">${mensaje}</td></tr>`;
   } else {
     tbody.innerHTML = rows
       .map((c) => {
@@ -245,8 +245,7 @@ function renderTablaClientes() {
         <td>${c.tdc || "—"}</td>
         <td>${c.fechaCita || "—"}</td>
         <td><span class="badge ${statusClass(c.status)}">${c.status || "Sin enviar"}</span></td>
-        <td>${waFolioAccionHTML_(clientIndex)}</td>
-        <td>${waRecordatorioAccionHTML_(c)}</td>
+        <td>${waAccionesSelectHTML_(clientIndex, c.nombre)}</td>
         <td>${trackingCellHTML_(c, "folio")}</td>
         <td>${trackingCellHTML_(c, "recordatorio")}</td>
       </tr>
@@ -290,32 +289,40 @@ document
       );
       return;
     }
+  });
 
-    const trackedLink = target.closest(".wa-track-open");
-    if (trackedLink) {
-      const client = CLIENTES[Number(trackedLink.dataset.clientIndex)];
-      updateTracking(client, trackedLink.dataset.trackingKind, "WhatsApp abierto");
-      return;
-    }
+function handleClientActionSelect(clientIndexValue, action) {
+  const clientIndex = Number(clientIndexValue);
+  const client = CLIENTES[clientIndex];
+  if (!client) {
+    console.error("No se encontró el cliente para la acción seleccionada");
+    toast("No se encontró el cliente");
+    return;
+  }
 
-    const button = target.closest(".wa-folio-btn");
-    if (!button) return;
-
-    const client = CLIENTES[Number(button.dataset.clientIndex)];
-    if (!client) {
-      console.error("No se encontró el cliente para enviar su folio");
-      toast("No se encontró el cliente");
-      return;
-    }
-
+  if (action === "folio") {
     const dialog = document.getElementById("folio-dialog");
     const input = document.getElementById("folio-input");
-    dialog.dataset.clientIndex = button.dataset.clientIndex;
+    dialog.dataset.clientIndex = String(clientIndex);
     input.value = client.folio || "";
     dialog.showModal();
     input.focus();
     input.select();
-  });
+  } else if (action === "recordatorio") {
+    window.open(
+      waLink_(client.celular, waMsgRecordatorio_(client)),
+      "_blank",
+      "noopener,noreferrer",
+    );
+    updateTracking(client, "recordatorio", "WhatsApp abierto");
+  } else if (action === "cita-programada") {
+    window.open(
+      waLink_(client.celular, waMsgSegundo_(client)),
+      "_blank",
+      "noopener,noreferrer",
+    );
+  }
+}
 
 document.getElementById("folio-form")?.addEventListener("submit", (event) => {
   event.preventDefault();

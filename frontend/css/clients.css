@@ -90,6 +90,10 @@
   border-color: var(--brand-500);
 }
 
+.client-actions-select {
+  min-width: 175px;
+}
+
 body.dark-mode .tracking-pending {
   background: #263041;
   color: #cbd5e1;
@@ -340,4 +344,3 @@ body.dark-mode .chip:hover {
 body.dark-mode .badge.st-0 { background: #1f2937; color: #cbd5e1; }
 body.dark-mode .badge.st-1 { background: #202733; color: #f3c77a; }
 body.dark-mode .badge.st-2 { background: #15261d; color: #76d58d; }
-
