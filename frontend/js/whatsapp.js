@@ -95,7 +95,7 @@ ${EMOJI.warning} Importante: Todos los documentos deberán presentarse en físic
 function waMsgSegundo_(c) {
   return `${EMOJI.envelope} Estimado cliente:
 
-Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito Banamex. ${EMOJI.card}
+Le recordamos que el día de hoy está programada la entrega de su Tarjeta de Crédito ${productoNombre_(c)} Banamex. ${EMOJI.card}
 
 ${EMOJI.pin} Para recibirla, es necesario que acuda a la sucursal de su preferencia dentro del horario de atención.
 
