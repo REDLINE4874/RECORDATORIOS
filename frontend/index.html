@@ -31,6 +31,10 @@
     <link rel="stylesheet" href="css/clients.css" />
     <link rel="stylesheet" href="css/feedback.css" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/site-auth.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-config.js" defer></script>
+    <script src="js/site-auth.js" defer></script>
     <script src="js/app-config.js" defer></script>
     <script src="js/whatsapp.js" defer></script>
     <script src="js/ui-controls.js" defer></script>
@@ -38,7 +42,7 @@
     <script src="js/clients.js" defer></script>
     <script src="js/components/theme-toggle.js" defer></script>
   </head>
-  <body>
+  <body class="site-auth-pending">
     <div class="navbar">
       <h1>Formalización</h1>
       <div class="tabs">
@@ -53,6 +57,7 @@
       <div class="status-dot">
         <span class="dot"></span><span id="lastSync">cargando…</span>
       </div>
+      <button type="button" class="auth-button" id="authButton">Iniciar sesión</button>
       <theme-toggle size="30"></theme-toggle>
     </div>
 

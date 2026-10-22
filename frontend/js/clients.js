@@ -372,6 +372,8 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
 
 // Start app when DOM is ready to avoid timing issues
 function startApp() {
+  if (window.siteAuthSession?.user == null || window.recordatoriosStarted) return;
+  window.recordatoriosStarted = true;
   try {
     console.log("startApp: calling loadData");
     loadData();
@@ -383,3 +385,4 @@ function startApp() {
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", startApp);
 } else startApp();
+window.addEventListener("site-auth-ready", startApp);
