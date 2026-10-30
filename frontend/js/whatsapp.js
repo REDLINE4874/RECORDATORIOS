@@ -10,9 +10,8 @@ function cleanPhone_(raw) {
 
 function waLink_(celular, message) {
   const phone = cleanPhone_(celular);
-  // Usamos api.whatsapp.com/send directo (en vez de wa.me) porque el
-  // redireccionamiento de wa.me corrompe emojis en algunos navegadores/dispositivos.
-  return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  // Solicita al dispositivo abrir la app de WhatsApp directamente.
+  return `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
 }
 
 function waIconSVG_() {
@@ -126,11 +125,11 @@ function waMsgRecordatorio_(c) {
 function waAccionHTML_(c, kind) {
   if (kind === "t1") {
     return `<div class="wa-actions">
-      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSr_(c))}" target="_blank" rel="noopener">${waIconSVG_()} Sr.</a>
-      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSrta_(c))}" target="_blank" rel="noopener">${waIconSVG_()} Srta.</a>
+      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSr_(c))}">${waIconSVG_()} Sr.</a>
+      <a class="wa-btn" href="${waLink_(c.celular, waMsgPrimerSrta_(c))}">${waIconSVG_()} Srta.</a>
     </div>`;
   }
-  return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" target="_blank" rel="noopener" aria-label="Enviar segundo recordatorio por WhatsApp">${waIconSVG_()}</a>`;
+  return `<a class="wa-btn" href="${waLink_(c.celular, waMsgSegundo_(c))}" aria-label="Enviar segundo recordatorio por WhatsApp">${waIconSVG_()}</a>`;
 }
 
 function waAccionesSelectHTML_(clientIndex, clientName) {

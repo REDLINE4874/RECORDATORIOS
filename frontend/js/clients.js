@@ -309,18 +309,10 @@ function handleClientActionSelect(clientIndexValue, action) {
     input.focus();
     input.select();
   } else if (action === "recordatorio") {
-    window.open(
-      waLink_(client.celular, waMsgRecordatorio_(client)),
-      "_blank",
-      "noopener,noreferrer",
-    );
+    window.location.href = waLink_(client.celular, waMsgRecordatorio_(client));
     updateTracking(client, "recordatorio", "WhatsApp abierto");
   } else if (action === "cita-programada") {
-    window.open(
-      waLink_(client.celular, waMsgSegundo_(client)),
-      "_blank",
-      "noopener,noreferrer",
-    );
+    window.location.href = waLink_(client.celular, waMsgSegundo_(client));
   }
 }
 
@@ -338,11 +330,7 @@ document.getElementById("folio-form")?.addEventListener("submit", (event) => {
   }
 
   input.setCustomValidity("");
-  window.open(
-    waLink_(client.celular, waMsgFolio_(folio)),
-    "_blank",
-    "noopener,noreferrer",
-  );
+  window.location.href = waLink_(client.celular, waMsgFolio_(folio));
   updateTracking(client, "folio", "WhatsApp abierto");
   dialog.close();
 });

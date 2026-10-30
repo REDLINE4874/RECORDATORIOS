@@ -129,7 +129,18 @@ if (!authConfigured) {
   document.body.classList.add("site-auth-required");
   setAuthStatus("Falta configurar Supabase en js/supabase-config.js.", true);
 } else {
-  window.SUPABASE_AUTH_CLIENT = window.supabase.createClient(authConfig.url, authConfig.anonKey);
+  window.SUPABASE_AUTH_CLIENT = window.supabase.createClient(
+    authConfig.url,
+    authConfig.anonKey,
+    {
+      auth: {
+        // Mantiene la sesión al recargar esta pestaña y la elimina al cerrarla.
+        storage: window.sessionStorage,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    },
+  );
   auth$("authLoginForm").addEventListener("submit", signIn);
   auth$("authRequestForm").addEventListener("submit", requestPasswordReset);
   auth$("authUpdateForm").addEventListener("submit", updatePassword);
