@@ -90,10 +90,6 @@
   border-color: var(--brand-500);
 }
 
-.client-actions-select {
-  min-width: 175px;
-}
-
 body.dark-mode .tracking-pending {
   background: #263041;
   color: #cbd5e1;

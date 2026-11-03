@@ -55,6 +55,14 @@ class ThemeToggle extends HTMLElement {
           --tx:24px; /* distancia que recorre la perilla al activar modo oscuro */
         }
 
+        :host([size="30"]){
+          --w:30px;
+          --h:20px;
+          --pad:2px;
+          --knob:12px;
+          --tx:10px;
+        }
+
         :host([size="sm"]){
           --w:38px;
           --h:20px;
@@ -75,21 +83,29 @@ class ThemeToggle extends HTMLElement {
           position:relative;
           width:var(--w);
           height:var(--h);
-          border-radius:999px;
-          border:none;
+          border:2px solid #171717;
+          border-radius:6px;
           cursor:pointer;
           padding:0;
           overflow:hidden;
-          background:linear-gradient(135deg, #8ec9f0, #f7d9a0);
-          transition:background 1s ease;
-          box-shadow:inset 0 2px 6px rgba(0,0,0,.15);
+          background:#91b9ff;
+          transition:transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+          box-shadow:8px 8px 0 #171717;
         }
         .switch.dark{
-          background:linear-gradient(135deg, #0b1030, #1b1e4a);
+          background:#414141;
         }
         .switch:focus-visible{
-          outline:3px solid #6ea8fe;
+          outline:3px solid #91b9ff;
           outline-offset:3px;
+        }
+        .switch:hover{
+          transform:translate(4px, 4px);
+          box-shadow:4px 4px 0 #171717;
+        }
+        .switch:active{
+          transform:translate(8px, 8px);
+          box-shadow:0 0 0 transparent;
         }
 
         /* Decoraciones posicionadas en % para escalar junto con el tamaño */
@@ -105,7 +121,7 @@ class ThemeToggle extends HTMLElement {
           width:2px;
           height:2px;
           background:#fff;
-          border-radius:50%;
+          border-radius:1px;
         }
         .stars span:nth-child(1){ top:21%; left:15%; }
         .stars span:nth-child(2){ top:43%; left:27%; width:1.5px; height:1.5px; }
@@ -121,8 +137,8 @@ class ThemeToggle extends HTMLElement {
         .switch.dark .clouds{ opacity:0; }
         .clouds span{
           position:absolute;
-          background:rgba(255,255,255,.85);
-          border-radius:50%;
+          background:#fff;
+          border-radius:2px;
         }
         .clouds span:nth-child(1){ width:17%; height:18%; top:18%; left:17%; }
         .clouds span:nth-child(2){ width:12%; height:14%; top:61%; left:23%; }
@@ -133,9 +149,10 @@ class ThemeToggle extends HTMLElement {
           left:var(--pad);
           width:var(--knob);
           height:var(--knob);
-          border-radius:50%;
-          background:#ffb648;
-          box-shadow:0 3px 8px rgba(0,0,0,.25);
+          border:1px solid #171717;
+          border-radius:4px;
+          background:#f5e642;
+          box-shadow:none;
           transform:translateX(0);
           transition:transform .3s cubic-bezier(.68,-0.4,.27,1.4), background .3s ease;
         }
@@ -145,8 +162,8 @@ class ThemeToggle extends HTMLElement {
         }
         .knob .crater{
           position:absolute;
-          background:#c7cdf0;
-          border-radius:50%;
+          background:#91b9ff;
+          border-radius:2px;
           opacity:0;
           transition:opacity .4s ease .15s;
         }

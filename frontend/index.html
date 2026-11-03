@@ -15,11 +15,10 @@
       media="(prefers-color-scheme: light)"
     />
 
-    <!-- Importamos Quicksand y Nunito desde Google Fonts -->
-    <link rel="preconnect" href="https://googleapis.com" />
-    <link rel="preconnect" href="https://gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://googleapis.com/css2?family=Nunito:wght@400;600&family=Quicksand:wght@500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -32,6 +31,7 @@
     <link rel="stylesheet" href="css/feedback.css" />
     <link rel="stylesheet" href="css/responsive.css" />
     <link rel="stylesheet" href="css/site-auth.css" />
+    <link rel="stylesheet" href="css/neobrutalism.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="js/supabase-config.js" defer></script>
     <script src="js/site-auth.js" defer></script>
@@ -117,7 +117,7 @@
       <!-- VISTA CLIENTES -->
       <section id="view-clientes" class="view">
         <div class="panel">
-          <div class="panel-title" style="margin-top: -4px">
+          <div class="panel-title">
             Base de datos de clientes.
           </div>
           <div class="filter-bar">
@@ -148,9 +148,8 @@
           </div>
 
           <div
-            class="panel-sub"
+            class="panel-sub clients-count"
             id="clientes-count-label"
-            style="margin-top: 16px"
           ></div>
           <div class="table-shell" id="tabla-clientes-wrap">
             <div class="table-scroll-hint">
@@ -179,6 +178,36 @@
         </div>
       </section>
     </main>
+
+    <dialog
+      class="folio-dialog client-actions-dialog"
+      id="client-actions-dialog"
+      aria-labelledby="client-actions-title"
+      aria-describedby="client-actions-description"
+    >
+      <form method="dialog">
+        <div class="folio-dialog__header">
+          <h2 id="client-actions-title">Acciones del cliente</h2>
+          <p id="client-actions-description">
+            Elige una acción para <strong id="client-actions-name"></strong>.
+          </p>
+        </div>
+        <div class="client-actions-options">
+          <button type="button" data-client-action="folio">
+            Enviar folio
+          </button>
+          <button type="button" data-client-action="recordatorio">
+            Enviar recordatorio
+          </button>
+          <button type="button" data-client-action="cita-programada">
+            Cita programada
+          </button>
+        </div>
+        <div class="folio-dialog__actions">
+          <button type="submit" class="btn-refresh">Cancelar</button>
+        </div>
+      </form>
+    </dialog>
 
     <dialog
       class="folio-dialog"

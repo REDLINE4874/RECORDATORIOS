@@ -279,6 +279,23 @@ document
     const target = event.target;
     if (!(target instanceof Element)) return;
 
+    const actionsButton = target.closest(".client-actions-trigger");
+    if (actionsButton) {
+      const client = CLIENTES[Number(actionsButton.dataset.clientIndex)];
+      if (!client) {
+        console.error("No se encontró el cliente para mostrar sus acciones");
+        toast("No se encontró el cliente");
+        return;
+      }
+
+      const dialog = document.getElementById("client-actions-dialog");
+      dialog.dataset.clientIndex = actionsButton.dataset.clientIndex;
+      document.getElementById("client-actions-name").textContent =
+        client.nombre || "este cliente";
+      dialog.showModal();
+      return;
+    }
+
     const trackingButton = target.closest(".tracking-update-button");
     if (trackingButton) {
       const client = CLIENTES[Number(trackingButton.dataset.clientIndex)];
@@ -289,6 +306,21 @@ document
       );
       return;
     }
+  });
+
+document
+  .getElementById("client-actions-dialog")
+  ?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const actionButton = target.closest("[data-client-action]");
+    if (!actionButton) return;
+
+    const dialog = document.getElementById("client-actions-dialog");
+    const clientIndex = dialog.dataset.clientIndex;
+    dialog.close();
+    handleClientActionSelect(clientIndex, actionButton.dataset.clientAction);
   });
 
 function handleClientActionSelect(clientIndexValue, action) {

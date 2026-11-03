@@ -133,21 +133,7 @@ function waAccionHTML_(c, kind) {
 }
 
 function waAccionesSelectHTML_(clientIndex, clientName) {
-  const actions = [
-    { value: "folio", label: "Enviar folio" },
-    { value: "recordatorio", label: "Enviar recordatorio" },
-    { value: "cita-programada", label: "Cita programada" },
-  ];
-  const items = actions
-    .map(
-      (action) =>
-        `<li class="custom-select__option" data-value="${action.value}" role="option">${action.label}</li>`,
-    )
-    .join("");
-  return `<div class="custom-select client-actions-select" data-kind="action" data-client-index="${clientIndex}">
-    <button type="button" class="custom-select__trigger" aria-label="Acciones para ${escapeHTML_(clientName || "cliente")}" aria-haspopup="listbox" aria-expanded="false">Seleccionar acción... <span class="custom-select__arrow">▾</span></button>
-    <ul class="custom-select__options" role="listbox">${items}</ul>
-  </div>`;
+  return `<button type="button" class="client-actions-trigger" data-client-index="${clientIndex}" aria-label="Acciones para ${escapeHTML_(clientName || "cliente")}" aria-haspopup="dialog">Acciones <span aria-hidden="true">▾</span></button>`;
 }
 
 function trackingDateLabel_(value) {
