@@ -33,7 +33,7 @@
 
 class ThemeToggle extends HTMLElement {
   static get observedAttributes() {
-    return ["size"];
+    return ["size", "dark-class"];
   }
 
   constructor() {
@@ -44,148 +44,163 @@ class ThemeToggle extends HTMLElement {
   connectedCallback() {
     this.shadowRoot.innerHTML = `
       <style>
-        :host{
-          display:inline-block;
-
-          /* Tamaño "md" (por defecto) */
-          --w:52px;
-          --h:28px;
-          --pad:3px;
-          --knob:22px;
-          --tx:24px; /* distancia que recorre la perilla al activar modo oscuro */
+        :host {
+          display: inline-flex;
+          vertical-align: middle;
+          --w: 52px;
+          --h: 28px;
+          --pad: 3px;
+          --knob: 22px;
+          --tx: 24px;
         }
 
-        :host([size="30"]){
-          --w:30px;
-          --h:20px;
-          --pad:2px;
-          --knob:12px;
-          --tx:10px;
+        :host([size="sm"]) {
+          --w: 38px;
+          --h: 20px;
+          --pad: 2px;
+          --knob: 16px;
+          --tx: 18px;
         }
 
-        :host([size="sm"]){
-          --w:38px;
-          --h:20px;
-          --pad:2px;
-          --knob:16px;
-          --tx:18px;
+        :host([size="lg"]) {
+          --w: 64px;
+          --h: 34px;
+          --pad: 4px;
+          --knob: 26px;
+          --tx: 30px;
         }
 
-        :host([size="lg"]){
-          --w:64px;
-          --h:34px;
-          --pad:4px;
-          --knob:26px;
-          --tx:30px;
+        .switch {
+          box-sizing: border-box;
+          position: relative;
+          display: block;
+          width: var(--w);
+          height: var(--h);
+          padding: 0;
+          overflow: visible;
+          border: 3px solid #171717;
+          border-radius: 8px;
+          background: #91b9ff;
+          box-shadow: 4px 4px 0 #171717;
+          cursor: pointer;
+          transition: background-color .2s ease, box-shadow .2s ease, transform .2s ease;
+          -webkit-tap-highlight-color: transparent;
         }
 
-        .switch{
-          position:relative;
-          width:var(--w);
-          height:var(--h);
-          border:2px solid #171717;
-          border-radius:6px;
-          cursor:pointer;
-          padding:0;
-          overflow:hidden;
-          background:#91b9ff;
-          transition:transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
-          box-shadow:8px 8px 0 #171717;
-        }
-        .switch.dark{
-          background:#414141;
-        }
-        .switch:focus-visible{
-          outline:3px solid #91b9ff;
-          outline-offset:3px;
-        }
-        .switch:hover{
-          transform:translate(4px, 4px);
-          box-shadow:4px 4px 0 #171717;
-        }
-        .switch:active{
-          transform:translate(8px, 8px);
-          box-shadow:0 0 0 transparent;
+        .switch.dark {
+          background: #26324b;
         }
 
-        /* Decoraciones posicionadas en % para escalar junto con el tamaño */
-        .stars{
-          position:absolute;
-          inset:0;
-          opacity:0;
-          transition:opacity .8s ease;
+        .switch:hover {
+          box-shadow: 5px 5px 0 #171717;
+          transform: translate(-1px, -1px);
         }
-        .switch.dark .stars{ opacity:1; }
-        .stars span{
-          position:absolute;
-          width:2px;
-          height:2px;
-          background:#fff;
-          border-radius:1px;
-        }
-        .stars span:nth-child(1){ top:21%; left:15%; }
-        .stars span:nth-child(2){ top:43%; left:27%; width:1.5px; height:1.5px; }
-        .stars span:nth-child(3){ top:64%; left:17%; }
-        .stars span:nth-child(4){ top:29%; left:35%; width:1.5px; height:1.5px; }
 
-        .clouds{
-          position:absolute;
-          inset:0;
-          opacity:1;
-          transition:opacity .8s ease;
+        .switch:active {
+          box-shadow: 1px 1px 0 #171717;
+          transform: translate(3px, 3px);
         }
-        .switch.dark .clouds{ opacity:0; }
-        .clouds span{
-          position:absolute;
-          background:#fff;
-          border-radius:2px;
-        }
-        .clouds span:nth-child(1){ width:17%; height:18%; top:18%; left:17%; }
-        .clouds span:nth-child(2){ width:12%; height:14%; top:61%; left:23%; }
 
-        .knob{
-          position:absolute;
-          top:var(--pad);
-          left:var(--pad);
-          width:var(--knob);
-          height:var(--knob);
-          border:1px solid #171717;
-          border-radius:4px;
-          background:#f5e642;
-          box-shadow:none;
-          transform:translateX(0);
-          transition:transform .3s cubic-bezier(.68,-0.4,.27,1.4), background .3s ease;
+        .switch:focus-visible {
+          outline: 3px solid #171717;
+          outline-offset: 6px;
         }
-        .switch.dark .knob{
-          transform:translateX(var(--tx));
-          background:#e8ecff;
+
+        .switch.dark:focus-visible {
+          outline-color: #f5e642;
         }
-        .knob .crater{
-          position:absolute;
-          background:#91b9ff;
-          border-radius:2px;
-          opacity:0;
-          transition:opacity .4s ease .15s;
+
+        .switch::before {
+          position: absolute;
+          top: 7px;
+          right: 9px;
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: #f5e642;
+          box-shadow: -7px 5px 0 -1px #fff, 5px -5px 0 -1px #fff;
+          content: "";
+          opacity: 0;
+          transition: opacity .2s ease;
         }
-        .switch.dark .knob .crater{ opacity:1; }
-        .knob .crater.c1{ width:23%; height:23%; top:18%; left:23%; }
-        .knob .crater.c2{ width:14%; height:14%; top:50%; left:50%; }
-        .knob .crater.c3{ width:11%; height:11%; top:27%; left:64%; }
+
+        .switch.dark::before {
+          opacity: 1;
+        }
+
+        .knob {
+          position: absolute;
+          top: 50%;
+          left: var(--pad);
+          display: grid;
+          z-index: 1;
+          width: var(--knob);
+          height: var(--knob);
+          place-items: center;
+          border: 2px solid #171717;
+          border-radius: 6px;
+          background: #f5e642;
+          color: #171717;
+          transform: translateY(-50%);
+          transition: transform .28s cubic-bezier(.2, .8, .2, 1), background-color .2s ease, color .2s ease;
+        }
+
+        .switch.dark .knob {
+          background: #e7d8ff;
+          color: #26324b;
+          transform: translateX(calc(var(--tx) - 4px)) translateY(-50%);
+        }
+
+        .knob svg {
+          position: absolute;
+          width: 62%;
+          height: 62%;
+          fill: currentColor;
+          stroke: none;
+          transition: opacity .16s ease, transform .25s ease;
+        }
+
+        .icon-moon {
+          opacity: 0;
+          transform: rotate(-35deg) scale(.7);
+        }
+
+        .switch.dark .icon-sun {
+          opacity: 0;
+          transform: rotate(35deg) scale(.7);
+        }
+
+        .switch.dark .icon-moon {
+          opacity: 1;
+          transform: rotate(0) scale(1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .switch,
+          .switch::before,
+          .knob,
+          .knob svg {
+            transition: none;
+          }
+        }
       </style>
 
       <button class="switch" part="switch" role="switch" aria-checked="false" aria-label="Cambiar entre modo claro y oscuro">
-        <span class="clouds"><span></span><span></span></span>
-        <span class="stars"><span></span><span></span><span></span><span></span></span>
-        <span class="knob">
-          <span class="crater c1"></span>
-          <span class="crater c2"></span>
-          <span class="crater c3"></span>
+        <span class="knob" aria-hidden="true">
+          <svg class="icon-sun" viewBox="0 0 24 24">
+            <path d="M11 1h2v4h-2zm0 18h2v4h-2zM1 11h4v2H1zm18 0h4v2h-4zM4.22 5.64l1.42-1.42 2.83 2.83-1.42 1.42zm11.31 11.31 1.42-1.42 2.83 2.83-1.42 1.42zM18.36 4.22l1.42 1.42-2.83 2.83-1.42-1.42zM7.05 15.54l1.42 1.42-2.83 2.83-1.42-1.42z"></path>
+            <circle cx="12" cy="12" r="4"></circle>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24">
+            <path d="M20.8 15.1A8.9 8.9 0 0 1 8.9 3.2a9.3 9.3 0 1 0 11.9 11.9Z"></path>
+          </svg>
         </span>
       </button>
     `;
 
     this.$btn = this.shadowRoot.querySelector(".switch");
     this.$btn.addEventListener("click", () => this.toggle());
+    this._applySize(this.getAttribute("size"));
 
     // Estado inicial: localStorage > preferencia del sistema
     const saved = localStorage.getItem("theme");
@@ -197,18 +212,68 @@ class ThemeToggle extends HTMLElement {
     this._setTheme(initialDark, { persist: false });
   }
 
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (!this.$btn || oldValue === newValue) {
+      return;
+    }
+
+    if (name === "size") {
+      this._applySize(newValue);
+    }
+
+    if (name === "dark-class") {
+      const previousClass = oldValue || "dark-mode";
+      const nextClass = newValue || "dark-mode";
+      if (previousClass !== nextClass) {
+        document.body.classList.remove(previousClass);
+        if (this.$btn.classList.contains("dark")) {
+          document.body.classList.add(nextClass);
+        }
+      }
+    }
+  }
+
+  _applySize(value) {
+    const properties = ["--w", "--h", "--pad", "--knob", "--tx"];
+
+    if (value === "sm" || value === "lg" || !value) {
+      properties.forEach((property) => this.style.removeProperty(property));
+      return;
+    }
+
+    const height = Number.parseFloat(value);
+    if (!Number.isFinite(height) || height <= 0) {
+      properties.forEach((property) => this.style.removeProperty(property));
+      return;
+    }
+
+    const width = height * (52 / 28);
+    const padding = height * (3 / 28);
+    const knob = height * (22 / 28);
+    const travel = width - knob - padding * 2;
+
+    this.style.setProperty("--h", `${height}px`);
+    this.style.setProperty("--w", `${width.toFixed(1)}px`);
+    this.style.setProperty("--pad", `${padding.toFixed(1)}px`);
+    this.style.setProperty("--knob", `${knob.toFixed(1)}px`);
+    this.style.setProperty("--tx", `${travel.toFixed(1)}px`);
+  }
+
   toggle() {
     const isDark = this.$btn.classList.contains("dark");
     this._setTheme(!isDark, { persist: true });
+  }
+
+  setTheme(theme) {
+    this._setTheme(theme === "dark", { persist: true });
   }
 
   _setTheme(isDark, { persist }) {
     this.$btn.classList.toggle("dark", isDark);
     this.$btn.setAttribute("aria-checked", String(isDark));
 
-    // Activa el modo oscuro con la MISMA convención que ya usa tu CSS:
-    // body.dark-mode { ... }
-    document.body.classList.toggle("dark-mode", isDark);
+    const darkClass = this.getAttribute("dark-class") || "dark-mode";
+    document.body.classList.toggle(darkClass, isDark);
 
     if (persist) {
       localStorage.setItem("theme", isDark ? "dark" : "light");
