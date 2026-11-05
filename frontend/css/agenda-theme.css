@@ -677,7 +677,6 @@ body.dark-mode .tracking-date {
 #tabla-clientes-wrap .search-match {
   border-radius: 2px;
   background: var(--nb-yellow);
-  color: var(--nb-ink);
 }
 
 .folio-dialog,
